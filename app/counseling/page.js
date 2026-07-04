@@ -99,7 +99,16 @@ export default function CounselingPage() {
     setLoading(true);
     setMessage("");
 
-    await supabase.from("app_users").upsert({ id: userId, role: "customer" });
+    // 既にapp_usersに登録済みなら role は上書きしない
+    const { data: existingAppUser } = await supabase
+      .from("app_users")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (!existingAppUser) {
+      await supabase.from("app_users").insert({ id: userId, role: "customer" });
+    }
 
     let { data: existingProfile } = await supabase
       .from("customer_profiles")
