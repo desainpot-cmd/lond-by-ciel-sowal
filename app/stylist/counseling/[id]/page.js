@@ -129,7 +129,16 @@ export default function StylistCounselingDetailPage() {
     const { data: userData } = await supabase.auth.getUser();
     const userId = userData?.user?.id;
 
-    await supabase.from("app_users").upsert({ id: userId, role: "stylist" });
+    // 既にapp_usersに登録済みなら role は上書きしない（admin等が stylist に戻されるのを防ぐ）
+    const { data: existingAppUser } = await supabase
+      .from("app_users")
+      .select("id, role")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (!existingAppUser) {
+      await supabase.from("app_users").insert({ id: userId, role: "stylist" });
+    }
 
     let { data: stylistProfile } = await supabase
       .from("stylist_profiles")
