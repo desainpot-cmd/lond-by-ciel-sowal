@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../lib/supabaseClient";
+import { getMyRole } from "../../lib/roleGuard";
 
 const STATUS_LABEL = {
   pending: "未対応",
@@ -11,12 +13,27 @@ const STATUS_LABEL = {
 };
 
 export default function StylistListPage() {
+  const router = useRouter();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+  const [denied, setDenied] = useState(false);
 
   useEffect(() => {
     const load = async () => {
+      const { userId, role } = await getMyRole();
+
+      if (!userId) {
+        router.push("/login");
+        return;
+      }
+
+      if (role !== "stylist" && role !== "admin") {
+        setDenied(true);
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("counseling_records")
         .select("id, created_at, status, hair_type, concerns, customer_profiles(name, age, gender)")
@@ -30,7 +47,19 @@ export default function StylistListPage() {
       setLoading(false);
     };
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (denied) {
+    return (
+      <main style={{ minHeight: "100vh", padding: 32, textAlign: "center" }}>
+        <p style={{ fontSize: 14, marginTop: 80 }}>このページを見る権限がありません。</p>
+        <Link href="/" style={{ fontSize: 13, color: "#8a8478" }}>
+          ホームに戻る
+        </Link>
+      </main>
+    );
+  }
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 640, margin: "0 auto" }}>
