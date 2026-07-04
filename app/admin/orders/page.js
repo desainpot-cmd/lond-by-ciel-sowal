@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "../../../lib/supabaseClient";
+import { getMyRole } from "../../../lib/roleGuard";
 
 const STATUS_LABEL = {
   pending_payment: "支払い待ち",
@@ -13,10 +16,12 @@ const STATUS_LABEL = {
 };
 
 export default function AdminOrdersPage() {
+  const router = useRouter();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [processingId, setProcessingId] = useState(null);
+  const [denied, setDenied] = useState(false);
 
   const load = async () => {
     const { data, error } = await supabase
@@ -35,7 +40,24 @@ export default function AdminOrdersPage() {
   };
 
   useEffect(() => {
-    load();
+    const init = async () => {
+      const { userId, role } = await getMyRole();
+
+      if (!userId) {
+        router.push("/login");
+        return;
+      }
+
+      if (role !== "admin") {
+        setDenied(true);
+        setLoading(false);
+        return;
+      }
+
+      load();
+    };
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const confirmPayment = async (order) => {
@@ -63,6 +85,15 @@ export default function AdminOrdersPage() {
   const fmt = (n) => (n ? Number(n).toLocaleString("vi-VN") + " VND" : "");
 
   if (loading) return <main style={{ padding: 32 }}>読み込み中...</main>;
+  if (denied)
+    return (
+      <main style={{ minHeight: "100vh", padding: 32, textAlign: "center" }}>
+        <p style={{ fontSize: 14, marginTop: 80 }}>このページを見る権限がありません。</p>
+        <Link href="/" style={{ fontSize: 13, color: "#8a8478" }}>
+          ホームに戻る
+        </Link>
+      </main>
+    );
   if (errorMsg) return <main style={{ padding: 32, color: "#b00" }}>エラー: {errorMsg}</main>;
 
   return (
