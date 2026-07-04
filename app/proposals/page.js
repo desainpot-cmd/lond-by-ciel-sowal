@@ -46,7 +46,7 @@ export default function ProposalsPage() {
       const { data: recs, error } = await supabase
         .from("stylist_recommendations")
         .select(
-          "id, usage_instruction, comment, created_at, products(volume, price, product_translations(name, description)), stylist_profiles(display_name)"
+          "id, usage_instruction, comment, created_at, products(id, volume, price, product_translations(name, description)), stylist_profiles(display_name)"
         )
         .in("counseling_id", counselingIds)
         .order("created_at", { ascending: false });
@@ -126,10 +126,28 @@ export default function ProposalsPage() {
               </div>
 
               {r.usage_instruction && (
-                <div style={{ fontSize: 12, color: "#1b1b1b", background: "#f7f4ee", borderRadius: 4, padding: 10, lineHeight: 1.7 }}>
+                <div style={{ fontSize: 12, color: "#1b1b1b", background: "#f7f4ee", borderRadius: 4, padding: 10, lineHeight: 1.7, marginBottom: 12 }}>
                   <b>使用方法：</b>
                   {r.usage_instruction}
                 </div>
+              )}
+
+              {r.products?.id && (
+                <Link
+                  href={`/products/${r.products.id}`}
+                  style={{
+                    display: "block",
+                    textAlign: "center",
+                    padding: 12,
+                    background: "#1b1b1b",
+                    color: "#fff",
+                    borderRadius: 4,
+                    fontSize: 13,
+                    textDecoration: "none",
+                  }}
+                >
+                  商品を見る
+                </Link>
               )}
             </div>
           );
