@@ -1,0 +1,18 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, "Inter", "Hiragino Sans", sans-serif;
+  background: #ffffff;
+  color: #1b1b1b;
+}
+
+a {
+  color: inherit;
+}
+
+input, button, textarea {
+  font-family: inherit;
+}
