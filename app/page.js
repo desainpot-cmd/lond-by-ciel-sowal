@@ -38,6 +38,17 @@ export default function Home() {
       >
         ログイン / 会員登録
       </Link>
+
+      <Link
+        href="/proposals"
+        style={{
+          color: "#1b1b1b",
+          fontSize: 13,
+          textDecoration: "underline",
+        }}
+      >
+        あなたへの提案を見る
+      </Link>
     </main>
   );
 }
