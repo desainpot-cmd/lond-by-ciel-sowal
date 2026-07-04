@@ -19,4 +19,7 @@ const INTEREST_LABEL = {
   treatment: "トリートメント",
   scalp: "頭皮ケア",
   styling: "スタイリング剤",
-  oil: "
+  oil: "ヘアオイル”,
+  coloring: "カラー後のケア",
+};
+
