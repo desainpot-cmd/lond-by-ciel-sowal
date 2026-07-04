@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../../../lib/supabaseClient";
+import { getMyRole } from "../../../../lib/roleGuard";
 
 const LABELS = {
   hair_length: { short: "ショート", medium: "ミディアム", long: "ロング", very_long: "超ロング" },
@@ -35,9 +36,11 @@ function Row({ label, value }) {
 
 export default function StylistCounselingDetailPage() {
   const { id } = useParams();
+  const router = useRouter();
   const [record, setRecord] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+  const [denied, setDenied] = useState(false);
 
   const [products, setProducts] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
@@ -80,11 +83,27 @@ export default function StylistCounselingDetailPage() {
   };
 
   useEffect(() => {
-    if (id) {
-      loadRecord();
-      loadProducts();
-      loadRecommendations();
-    }
+    const init = async () => {
+      const { userId, role } = await getMyRole();
+
+      if (!userId) {
+        router.push("/login");
+        return;
+      }
+
+      if (role !== "stylist" && role !== "admin") {
+        setDenied(true);
+        setLoading(false);
+        return;
+      }
+
+      if (id) {
+        loadRecord();
+        loadProducts();
+        loadRecommendations();
+      }
+    };
+    init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -160,6 +179,15 @@ export default function StylistCounselingDetailPage() {
   };
 
   if (loading) return <main style={{ padding: 32 }}>読み込み中...</main>;
+  if (denied)
+    return (
+      <main style={{ minHeight: "100vh", padding: 32, textAlign: "center" }}>
+        <p style={{ fontSize: 14, marginTop: 80 }}>このページを見る権限がありません。</p>
+        <Link href="/" style={{ fontSize: 13, color: "#8a8478" }}>
+          ホームに戻る
+        </Link>
+      </main>
+    );
   if (errorMsg) return <main style={{ padding: 32, color: "#b00" }}>エラー: {errorMsg}</main>;
   if (!record) return <main style={{ padding: 32 }}>データが見つかりません</main>;
 
