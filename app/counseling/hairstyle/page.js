@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../lib/supabaseClient";
+import { uploadCounselingPhoto } from "../../../lib/uploadPhoto";
 
 const MENU_CATEGORIES = ["カット", "カラー", "カット＆カラー", "パーマ", "縮毛矯正", "ケア", "その他"];
 const LENGTHS = [
@@ -63,6 +64,8 @@ export default function HairstyleCounselingPage() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [photos, setPhotos] = useState({ reference: null, curl: null, damage: null });
+  const [uploadingKey, setUploadingKey] = useState(null);
 
   useEffect(() => {
     const init = async () => {
@@ -86,6 +89,19 @@ export default function HairstyleCounselingPage() {
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const back = () => setStep((s) => Math.max(s - 1, 1));
+
+  const handlePhotoChange = async (key, file) => {
+    if (!file) return;
+    setUploadingKey(key);
+    setErrorMsg("");
+    try {
+      const url = await uploadCounselingPhoto(file, userId);
+      setPhotos((prev) => ({ ...prev, [key]: url }));
+    } catch (err) {
+      setErrorMsg("写真のアップロードに失敗しました: " + err.message);
+    }
+    setUploadingKey(null);
+  };
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -124,32 +140,47 @@ export default function HairstyleCounselingPage() {
       customerId = newProfile.id;
     }
 
-    const { error: counselingError } = await supabase.from("counseling_records").insert({
-      customer_id: customerId,
-      counseling_type: "hairstyle",
-      desired_result: a.desired_result,
-      interested_menu_categories: a.interested_menu_categories,
-      hair_length: a.hair_length,
-      hair_type: a.hair_type,
-      hair_thickness: a.hair_thickness,
-      hair_volume: a.hair_volume,
-      damage_level: a.damage_level,
-      curl_position: a.curl_position,
-      bleach_history: a.bleach_history,
-      bleach_last_done: a.bleach_history ? a.bleach_last_done : null,
-      perm_history: a.perm_history,
-      perm_last_done: a.perm_history ? a.perm_last_done : null,
-      straight_perm_history: a.straight_perm_history,
-      straight_perm_last_done: a.straight_perm_history ? a.straight_perm_last_done : null,
-      preferred_stylist_id: a.preferred_stylist_id,
-      status: "pending",
-    });
+    const { data: newCounseling, error: counselingError } = await supabase
+      .from("counseling_records")
+      .insert({
+        customer_id: customerId,
+        counseling_type: "hairstyle",
+        desired_result: a.desired_result,
+        interested_menu_categories: a.interested_menu_categories,
+        hair_length: a.hair_length,
+        hair_type: a.hair_type,
+        hair_thickness: a.hair_thickness,
+        hair_volume: a.hair_volume,
+        damage_level: a.damage_level,
+        curl_position: a.curl_position,
+        bleach_history: a.bleach_history,
+        bleach_last_done: a.bleach_history ? a.bleach_last_done : null,
+        perm_history: a.perm_history,
+        perm_last_done: a.perm_history ? a.perm_last_done : null,
+        straight_perm_history: a.straight_perm_history,
+        straight_perm_last_done: a.straight_perm_history ? a.straight_perm_last_done : null,
+        preferred_stylist_id: a.preferred_stylist_id,
+        status: "pending",
+      })
+      .select()
+      .single();
 
     if (counselingError) {
       setErrorMsg("エラー（送信）: " + counselingError.message);
-    } else {
-      setDone(true);
+      setLoading(false);
+      return;
     }
+
+    const photoRows = [];
+    if (photos.reference) photoRows.push({ counseling_id: newCounseling.id, angle: "reference", image_url: photos.reference });
+    if (photos.curl) photoRows.push({ counseling_id: newCounseling.id, angle: "curl", image_url: photos.curl });
+    if (photos.damage) photoRows.push({ counseling_id: newCounseling.id, angle: "damage", image_url: photos.damage });
+
+    if (photoRows.length > 0) {
+      await supabase.from("counseling_photos").insert(photoRows);
+    }
+
+    setDone(true);
     setLoading(false);
   };
 
@@ -238,9 +269,29 @@ export default function HairstyleCounselingPage() {
               placeholder="例：フェミニンな雰囲気にしたい、スタイリングが簡単な髪型にしたい、など"
               style={{ ...inputStyle, resize: "none" }}
             />
-            <p style={{ fontSize: 11.5, color: "#8a8478", lineHeight: 1.8, marginBottom: 16 }}>
-              参考写真があれば、次のステップ以降でアップロードいただけます（任意・現在準備中）
-            </p>
+            <label style={label}>参考写真（任意）</label>
+            {photos.reference ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                <img src={photos.reference} alt="参考写真" style={{ width: 70, height: 70, objectFit: "cover", borderRadius: 6 }} />
+                <button
+                  type="button"
+                  onClick={() => setPhotos((p) => ({ ...p, reference: null }))}
+                  style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+                >
+                  削除してやり直す
+                </button>
+              </div>
+            ) : (
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handlePhotoChange("reference", e.target.files?.[0])}
+                disabled={uploadingKey === "reference"}
+                style={{ fontSize: 12, marginBottom: 16 }}
+              />
+            )}
+            {uploadingKey === "reference" && <p style={{ fontSize: 11, color: "#8a8478", marginBottom: 16 }}>アップロード中...</p>}
+            {errorMsg && <p style={{ fontSize: 13, color: "#b00", marginBottom: 12 }}>{errorMsg}</p>}
             <div style={btnRow}>
               <button style={primaryBtn} onClick={next}>次へ</button>
             </div>
@@ -322,9 +373,39 @@ export default function HairstyleCounselingPage() {
             <HistoryBlock label="ブリーチ" valueKey="bleach_history" whenKey="bleach_last_done" />
             <HistoryBlock label="パーマ" valueKey="perm_history" whenKey="perm_last_done" />
             <HistoryBlock label="縮毛矯正・ストレートパーマ" valueKey="straight_perm_history" whenKey="straight_perm_last_done" />
-            <p style={{ fontSize: 11.5, color: "#8a8478", lineHeight: 1.8, margin: "12px 0 0" }}>
-              くせの部分・ダメージが気になる部分の写真アップロードは任意です（現在準備中）
-            </p>
+
+            {[
+              { key: "curl", label: "くせが気になる部分の写真（任意）" },
+              { key: "damage", label: "ダメージが気になる部分の写真（任意）" },
+            ].map(({ key, label: l }) => (
+              <div key={key} style={{ marginTop: 16 }}>
+                <label style={label}>{l}</label>
+                {photos[key] ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <img src={photos[key]} alt={l} style={{ width: 70, height: 70, objectFit: "cover", borderRadius: 6 }} />
+                    <button
+                      type="button"
+                      onClick={() => setPhotos((p) => ({ ...p, [key]: null }))}
+                      style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+                    >
+                      削除してやり直す
+                    </button>
+                  </div>
+                ) : (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handlePhotoChange(key, e.target.files?.[0])}
+                    disabled={uploadingKey === key}
+                    style={{ fontSize: 12 }}
+                  />
+                )}
+                {uploadingKey === key && <p style={{ fontSize: 11, color: "#8a8478" }}>アップロード中...</p>}
+              </div>
+            ))}
+
+            {errorMsg && <p style={{ fontSize: 13, color: "#b00", margin: "16px 0 0" }}>{errorMsg}</p>}
+
             <div style={btnRow}>
               <button style={ghostBtn} onClick={back}>戻る</button>
               <button style={primaryBtn} onClick={next}>次へ</button>
