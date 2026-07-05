@@ -41,6 +41,7 @@ export default function StylistHairstyleDetailPage() {
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
   const [proposals, setProposals] = useState([]);
+  const [photos, setPhotos] = useState([]);
 
   const loadRecord = async () => {
     const { data, error } = await supabase
@@ -85,6 +86,14 @@ export default function StylistHairstyleDetailPage() {
     setProposals(data || []);
   };
 
+  const loadPhotos = async () => {
+    const { data } = await supabase
+      .from("counseling_photos")
+      .select("id, angle, image_url")
+      .eq("counseling_id", id);
+    setPhotos(data || []);
+  };
+
   useEffect(() => {
     const init = async () => {
       const { userId, role } = await getMyRole();
@@ -101,6 +110,7 @@ export default function StylistHairstyleDetailPage() {
         loadRecord();
         loadMenus();
         loadProposals();
+        loadPhotos();
       }
     };
     init();
@@ -264,6 +274,26 @@ export default function StylistHairstyleDetailPage() {
           }
         />
       </div>
+
+      {photos.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 8 }}>アップロードされた写真</p>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            {photos.map((p) => (
+              <div key={p.id} style={{ textAlign: "center" }}>
+                <img
+                  src={p.image_url}
+                  alt={p.angle}
+                  style={{ width: 90, height: 90, objectFit: "cover", borderRadius: 6, display: "block", marginBottom: 4 }}
+                />
+                <span style={{ fontSize: 10.5, color: "#8a8478" }}>
+                  {p.angle === "reference" ? "参考写真" : p.angle === "curl" ? "くせ部分" : "ダメージ部分"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: 10, marginBottom: 30 }}>
         <button
