@@ -44,6 +44,7 @@ export default function StylistCounselingDetailPage() {
 
   const [products, setProducts] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
+  const [photos, setPhotos] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [usage, setUsage] = useState("");
   const [comment, setComment] = useState("");
@@ -82,6 +83,14 @@ export default function StylistCounselingDetailPage() {
     setRecommendations(data || []);
   };
 
+  const loadPhotos = async () => {
+    const { data } = await supabase
+      .from("counseling_photos")
+      .select("id, angle, image_url, concern_tag")
+      .eq("counseling_id", id);
+    setPhotos(data || []);
+  };
+
   useEffect(() => {
     const init = async () => {
       const { userId, role } = await getMyRole();
@@ -101,6 +110,7 @@ export default function StylistCounselingDetailPage() {
         loadRecord();
         loadProducts();
         loadRecommendations();
+        loadPhotos();
       }
     };
     init();
@@ -258,6 +268,27 @@ export default function StylistCounselingDetailPage() {
         <Row label="悩み" value={record.concerns?.join("、")} />
         <Row label="希望の仕上がり" value={record.desired_result} />
       </div>
+
+      {photos.length > 0 && (
+        <div style={{ marginBottom: 20 }}>
+          <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 8 }}>アップロードされた写真</p>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            {photos.map((p) => (
+              <div key={p.id} style={{ textAlign: "center" }}>
+                <img
+                  src={p.image_url}
+                  alt={p.angle}
+                  style={{ width: 90, height: 90, objectFit: "cover", borderRadius: 6, display: "block", marginBottom: 4 }}
+                />
+                <span style={{ fontSize: 10.5, color: "#8a8478" }}>
+                  {p.angle === "side" ? "横" : p.angle === "back" ? "後ろ" : "気になる箇所"}
+                  {p.concern_tag ? `（${p.concern_tag}）` : ""}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: 10, marginBottom: 30 }}>
         <button
