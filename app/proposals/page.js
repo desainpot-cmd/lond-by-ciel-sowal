@@ -10,6 +10,9 @@ export default function ProposalsPage() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [recommendations, setRecommendations] = useState([]);
+  const [menuProposals, setMenuProposals] = useState([]);
+  const [menuMap, setMenuMap] = useState({});
+  const [bookingLink, setBookingLink] = useState(null);
 
   useEffect(() => {
     const load = async () => {
@@ -25,6 +28,13 @@ export default function ProposalsPage() {
         .select("id")
         .eq("user_id", userId)
         .maybeSingle();
+
+      const { data: settings } = await supabase
+        .from("salon_settings")
+        .select("booking_link_url, booking_link_label")
+        .limit(1)
+        .maybeSingle();
+      setBookingLink(settings || null);
 
       if (!profile) {
         setLoading(false);
@@ -56,6 +66,21 @@ export default function ProposalsPage() {
       } else {
         setRecommendations(recs || []);
       }
+
+      const { data: menuProps } = await supabase
+        .from("stylist_menu_proposals")
+        .select("id, menu_ids, total_price, comment, created_at, stylist_profiles(display_name)")
+        .in("counseling_id", counselingIds)
+        .order("created_at", { ascending: false });
+      setMenuProposals(menuProps || []);
+
+      const { data: allMenus } = await supabase.from("menus").select("id, name, category, price");
+      const map = {};
+      (allMenus || []).forEach((m) => {
+        map[m.id] = m;
+      });
+      setMenuMap(map);
+
       setLoading(false);
     };
     load();
@@ -71,6 +96,8 @@ export default function ProposalsPage() {
     );
   }
 
+  const hasAnyProposal = recommendations.length > 0 || menuProposals.length > 0;
+
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 480, margin: "0 auto" }}>
       <Link href="/" style={{ fontSize: 12, color: "#8a8478", textDecoration: "none" }}>
@@ -81,9 +108,9 @@ export default function ProposalsPage() {
 
       {errorMsg && <p style={{ fontSize: 13, color: "#b00" }}>エラー: {errorMsg}</p>}
 
-      {!errorMsg && recommendations.length === 0 && (
+      {!errorMsg && !hasAnyProposal && (
         <div style={{ background: "#f7f4ee", borderRadius: 6, padding: 20, fontSize: 13, color: "#8a8478", lineHeight: 1.8 }}>
-          まだ提案がありません。カウンセリングを送信すると、スタイリストが確認後にここへ商品を提案します。
+          まだ提案がありません。カウンセリングを送信すると、スタイリストが確認後にここへ提案します。
           <div style={{ marginTop: 14 }}>
             <Link
               href="/counseling"
@@ -103,56 +130,115 @@ export default function ProposalsPage() {
         </div>
       )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        {recommendations.map((r) => {
-          const t = r.products?.product_translations?.[0];
-          return (
-            <div key={r.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16 }}>
-              <div style={{ fontSize: 11, color: "#b8926b", fontWeight: 600, marginBottom: 10 }}>
-                {r.stylist_profiles?.display_name || "スタイリスト"} より
-              </div>
-
-              {r.comment && (
-                <p style={{ fontSize: 12.5, color: "#8a8478", lineHeight: 1.7, marginBottom: 14 }}>{r.comment}</p>
-              )}
-
-              <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
-                <div style={{ width: 56, height: 56, background: "#f0ede5", borderRadius: 6, flexShrink: 0 }} />
-                <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 3 }}>{t?.name || "(商品名なし)"}</div>
-                  <div style={{ fontSize: 11, color: "#8a8478", marginBottom: 3 }}>{r.products?.volume}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600 }}>{fmt(r.products?.price)}</div>
+      {menuProposals.length > 0 && (
+        <div style={{ marginBottom: 24 }}>
+          <h2 style={{ fontFamily: "serif", fontSize: 16, marginBottom: 12 }}>髪型メニューのご提案</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {menuProposals.map((p) => (
+              <div key={p.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16 }}>
+                <div style={{ fontSize: 11, color: "#b8926b", fontWeight: 600, marginBottom: 10 }}>
+                  {p.stylist_profiles?.display_name || "スタイリスト"} より
                 </div>
-              </div>
-
-              {r.usage_instruction && (
-                <div style={{ fontSize: 12, color: "#1b1b1b", background: "#f7f4ee", borderRadius: 4, padding: 10, lineHeight: 1.7, marginBottom: 12 }}>
-                  <b>使用方法：</b>
-                  {r.usage_instruction}
+                {p.comment && (
+                  <p style={{ fontSize: 12.5, color: "#8a8478", lineHeight: 1.7, marginBottom: 14 }}>{p.comment}</p>
+                )}
+                <div style={{ marginBottom: 12 }}>
+                  {p.menu_ids?.map((mid) => (
+                    <div key={mid} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "6px 0", borderBottom: "1px solid #f0ede5" }}>
+                      <span>{menuMap[mid]?.name || "(メニュー)"}</span>
+                      <span>{fmt(menuMap[mid]?.price)}</span>
+                    </div>
+                  ))}
                 </div>
-              )}
+                <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 600, fontSize: 14, marginBottom: 14 }}>
+                  <span>合計</span>
+                  <span>{fmt(p.total_price)}</span>
+                </div>
 
-              {r.products?.id && (
-                <Link
-                  href={`/products/${r.products.id}`}
-                  style={{
-                    display: "block",
-                    textAlign: "center",
-                    padding: 12,
-                    background: "#1b1b1b",
-                    color: "#fff",
-                    borderRadius: 4,
-                    fontSize: 13,
-                    textDecoration: "none",
-                  }}
-                >
-                  商品を見る
-                </Link>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                {bookingLink?.booking_link_url ? (
+                  <a
+                    href={bookingLink.booking_link_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "block",
+                      textAlign: "center",
+                      padding: 12,
+                      background: "#1b1b1b",
+                      color: "#fff",
+                      borderRadius: 4,
+                      fontSize: 13,
+                      textDecoration: "none",
+                    }}
+                  >
+                    {bookingLink.booking_link_label || "オンラインブッキングへ進む"}
+                  </a>
+                ) : (
+                  <p style={{ fontSize: 11, color: "#8a8478", textAlign: "center" }}>
+                    予約リンクは準備中です。サロンまで直接お問い合わせください。
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {recommendations.length > 0 && (
+        <div>
+          <h2 style={{ fontFamily: "serif", fontSize: 16, marginBottom: 12 }}>商品のご提案</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {recommendations.map((r) => {
+              const t = r.products?.product_translations?.[0];
+              return (
+                <div key={r.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16 }}>
+                  <div style={{ fontSize: 11, color: "#b8926b", fontWeight: 600, marginBottom: 10 }}>
+                    {r.stylist_profiles?.display_name || "スタイリスト"} より
+                  </div>
+
+                  {r.comment && (
+                    <p style={{ fontSize: 12.5, color: "#8a8478", lineHeight: 1.7, marginBottom: 14 }}>{r.comment}</p>
+                  )}
+
+                  <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
+                    <div style={{ width: 56, height: 56, background: "#f0ede5", borderRadius: 6, flexShrink: 0 }} />
+                    <div>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 3 }}>{t?.name || "(商品名なし)"}</div>
+                      <div style={{ fontSize: 11, color: "#8a8478", marginBottom: 3 }}>{r.products?.volume}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{fmt(r.products?.price)}</div>
+                    </div>
+                  </div>
+
+                  {r.usage_instruction && (
+                    <div style={{ fontSize: 12, color: "#1b1b1b", background: "#f7f4ee", borderRadius: 4, padding: 10, lineHeight: 1.7, marginBottom: 12 }}>
+                      <b>使用方法：</b>
+                      {r.usage_instruction}
+                    </div>
+                  )}
+
+                  {r.products?.id && (
+                    <Link
+                      href={`/products/${r.products.id}`}
+                      style={{
+                        display: "block",
+                        textAlign: "center",
+                        padding: 12,
+                        background: "#1b1b1b",
+                        color: "#fff",
+                        borderRadius: 4,
+                        fontSize: 13,
+                        textDecoration: "none",
+                      }}
+                    >
+                      商品を見る
+                    </Link>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </main>
   );
 }
