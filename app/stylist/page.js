@@ -36,7 +36,7 @@ export default function StylistListPage() {
 
       const { data, error } = await supabase
         .from("counseling_records")
-        .select("id, created_at, status, hair_type, concerns, customer_profiles(name, age, gender)")
+        .select("id, created_at, status, counseling_type, hair_type, concerns, desired_result, customer_profiles(name, age, gender)")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -72,45 +72,66 @@ export default function StylistListPage() {
       )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {records.map((r) => (
-          <Link
-            key={r.id}
-            href={`/stylist/counseling/${r.id}`}
-            style={{
-              display: "block",
-              border: "1px solid #e6e1d6",
-              borderRadius: 6,
-              padding: 16,
-              textDecoration: "none",
-              color: "#1b1b1b",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-              <span style={{ fontSize: 14, fontWeight: 600 }}>
-                {r.customer_profiles?.name || "お名前未設定"}
-              </span>
-              <span
-                style={{
-                  fontSize: 11,
-                  padding: "3px 10px",
-                  borderRadius: 999,
-                  background: r.status === "pending" ? "#1b1b1b" : "#eee",
-                  color: r.status === "pending" ? "#fff" : "#1b1b1b",
-                }}
-              >
-                {STATUS_LABEL[r.status] || r.status}
-              </span>
-            </div>
-            <div style={{ fontSize: 12, color: "#8a8478" }}>
-              {new Date(r.created_at).toLocaleString("ja-JP")}
-            </div>
-            {r.concerns?.length > 0 && (
-              <div style={{ fontSize: 12, color: "#8a8478", marginTop: 4 }}>
-                悩み：{r.concerns.join("、")}
+        {records.map((r) => {
+          const isHairstyle = r.counseling_type === "hairstyle";
+          return (
+            <Link
+              key={r.id}
+              href={isHairstyle ? `/stylist/hairstyle/${r.id}` : `/stylist/counseling/${r.id}`}
+              style={{
+                display: "block",
+                border: "1px solid #e6e1d6",
+                borderRadius: 6,
+                padding: 16,
+                textDecoration: "none",
+                color: "#1b1b1b",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, gap: 8 }}>
+                <span style={{ fontSize: 14, fontWeight: 600 }}>
+                  {r.customer_profiles?.name || "お名前未設定"}
+                </span>
+                <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                  <span
+                    style={{
+                      fontSize: 10.5,
+                      padding: "3px 9px",
+                      borderRadius: 999,
+                      background: isHairstyle ? "#b8926b" : "#e6e1d6",
+                      color: isHairstyle ? "#fff" : "#1b1b1b",
+                    }}
+                  >
+                    {isHairstyle ? "髪型" : "商品"}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      padding: "3px 10px",
+                      borderRadius: 999,
+                      background: r.status === "pending" ? "#1b1b1b" : "#eee",
+                      color: r.status === "pending" ? "#fff" : "#1b1b1b",
+                    }}
+                  >
+                    {STATUS_LABEL[r.status] || r.status}
+                  </span>
+                </div>
               </div>
-            )}
-          </Link>
-        ))}
+              <div style={{ fontSize: 12, color: "#8a8478" }}>
+                {new Date(r.created_at).toLocaleString("ja-JP")}
+              </div>
+              {isHairstyle && r.desired_result && (
+                <div style={{ fontSize: 12, color: "#8a8478", marginTop: 4 }}>
+                  なりたいイメージ：{r.desired_result}
+                </div>
+              )}
+              {!isHairstyle && r.concerns?.length > 0 && (
+                <div style={{ fontSize: 12, color: "#8a8478", marginTop: 4 }}>
+                  悩み：{r.concerns.join("、")}
+                </div>
+              )}
+            </Link>
+          );
+        })}
       </div>
     </main>
   );
