@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../lib/supabaseClient";
+import { uploadCounselingPhoto } from "../../../lib/uploadPhoto";
+
+const CONCERN_TAGS = ["枝毛", "パサつき", "広がり", "分け目"];
 
 const INTEREST_OPTIONS = [
   { id: "shampoo", label: "シャンプー" },
@@ -76,6 +79,9 @@ export default function CounselingPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [photos, setPhotos] = useState({ side: null, back: null, concern: null });
+  const [uploadingKey, setUploadingKey] = useState(null);
+  const [concernTag, setConcernTag] = useState("");
 
   useEffect(() => {
     const checkUser = async () => {
@@ -94,6 +100,19 @@ export default function CounselingPage() {
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const back = () => setStep((s) => Math.max(s - 1, 1));
+
+  const handlePhotoChange = async (key, file) => {
+    if (!file) return;
+    setUploadingKey(key);
+    setMessage("");
+    try {
+      const url = await uploadCounselingPhoto(file, userId);
+      setPhotos((prev) => ({ ...prev, [key]: url }));
+    } catch (err) {
+      setMessage("写真のアップロードに失敗しました: " + err.message);
+    }
+    setUploadingKey(null);
+  };
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -138,30 +157,51 @@ export default function CounselingPage() {
         .eq("id", customerId);
     }
 
-    const { error: counselingError } = await supabase.from("counseling_records").insert({
-      customer_id: customerId,
-      product_interests: a.interests,
-      hair_length: a.hair_length,
-      hair_type: a.hair_type,
-      hair_thickness: a.hair_thickness,
-      hair_volume: a.hair_volume,
-      damage_level: a.damage_level,
-      bleach_history: a.bleach_history,
-      bleach_last_done: a.bleach_history ? a.bleach_last_done : null,
-      perm_history: a.perm_history,
-      perm_last_done: a.perm_history ? a.perm_last_done : null,
-      straight_perm_history: a.straight_perm_history,
-      straight_perm_last_done: a.straight_perm_history ? a.straight_perm_last_done : null,
-      concerns: a.concerns,
-      desired_result: a.desired_result,
-      status: "pending",
-    });
+    const { data: newCounseling, error: counselingError } = await supabase
+      .from("counseling_records")
+      .insert({
+        customer_id: customerId,
+        product_interests: a.interests,
+        hair_length: a.hair_length,
+        hair_type: a.hair_type,
+        hair_thickness: a.hair_thickness,
+        hair_volume: a.hair_volume,
+        damage_level: a.damage_level,
+        bleach_history: a.bleach_history,
+        bleach_last_done: a.bleach_history ? a.bleach_last_done : null,
+        perm_history: a.perm_history,
+        perm_last_done: a.perm_history ? a.perm_last_done : null,
+        straight_perm_history: a.straight_perm_history,
+        straight_perm_last_done: a.straight_perm_history ? a.straight_perm_last_done : null,
+        concerns: a.concerns,
+        desired_result: a.desired_result,
+        status: "pending",
+      })
+      .select()
+      .single();
 
     if (counselingError) {
       setMessage("エラー（カウンセリング保存）: " + counselingError.message);
-    } else {
-      setDone(true);
+      setLoading(false);
+      return;
     }
+
+    const photoRows = [];
+    if (photos.side) photoRows.push({ counseling_id: newCounseling.id, angle: "side", image_url: photos.side });
+    if (photos.back) photoRows.push({ counseling_id: newCounseling.id, angle: "back", image_url: photos.back });
+    if (photos.concern)
+      photoRows.push({
+        counseling_id: newCounseling.id,
+        angle: "concern",
+        image_url: photos.concern,
+        concern_tag: concernTag || null,
+      });
+
+    if (photoRows.length > 0) {
+      await supabase.from("counseling_photos").insert(photoRows);
+    }
+
+    setDone(true);
     setLoading(false);
   };
 
@@ -357,14 +397,82 @@ export default function CounselingPage() {
         {step === 6 && (
           <>
             <h1 style={h1}>写真アップロード（任意）</h1>
-            <p style={{ fontSize: 12, color: "#8a8478", lineHeight: 1.8, marginBottom: 20 }}>
-              横・後ろ・気になる箇所の写真は任意です。アップロード機能は次のステップで追加予定のため、
-              今回はスキップして送信できます。
+            <p style={{ fontSize: 12, color: "#8a8478", lineHeight: 1.8, marginBottom: 16 }}>
+              横・後ろ・気になる箇所の写真は任意です。顔が写らない角度でお願いします。
             </p>
+
+            {[
+              { key: "side", label: "横（耳〜毛先）" },
+              { key: "back", label: "後ろ（うなじ〜背中）" },
+            ].map(({ key, label: l }) => (
+              <div key={key} style={{ marginBottom: 16 }}>
+                <label style={label}>{l}</label>
+                {photos[key] ? (
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <img src={photos[key]} alt={l} style={{ width: 70, height: 70, objectFit: "cover", borderRadius: 6 }} />
+                    <button
+                      type="button"
+                      onClick={() => setPhotos((p) => ({ ...p, [key]: null }))}
+                      style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+                    >
+                      削除してやり直す
+                    </button>
+                  </div>
+                ) : (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handlePhotoChange(key, e.target.files?.[0])}
+                    disabled={uploadingKey === key}
+                    style={{ fontSize: 12 }}
+                  />
+                )}
+                {uploadingKey === key && <p style={{ fontSize: 11, color: "#8a8478" }}>アップロード中...</p>}
+              </div>
+            ))}
+
+            <div style={{ border: "1px solid #eee", borderRadius: 6, padding: 14, marginBottom: 16 }}>
+              <label style={label}>気になる箇所</label>
+              {photos.concern ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                  <img src={photos.concern} alt="気になる箇所" style={{ width: 70, height: 70, objectFit: "cover", borderRadius: 6 }} />
+                  <button
+                    type="button"
+                    onClick={() => setPhotos((p) => ({ ...p, concern: null }))}
+                    style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+                  >
+                    削除してやり直す
+                  </button>
+                </div>
+              ) : (
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handlePhotoChange("concern", e.target.files?.[0])}
+                  disabled={uploadingKey === "concern"}
+                  style={{ fontSize: 12, marginBottom: 10 }}
+                />
+              )}
+              {uploadingKey === "concern" && <p style={{ fontSize: 11, color: "#8a8478" }}>アップロード中...</p>}
+
+              {photos.concern && (
+                <>
+                  <p style={{ fontSize: 11.5, color: "#8a8478", margin: "10px 0 8px" }}>この写真はどの悩みですか？</p>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    {CONCERN_TAGS.map((t) => (
+                      <Tag key={t} selected={concernTag === t} onClick={() => setConcernTag(t)}>
+                        {t}
+                      </Tag>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
             {message && <p style={{ fontSize: 13, color: "#b00", marginBottom: 12 }}>{message}</p>}
             <div style={btnRow}>
               <button style={ghostBtn} onClick={back}>戻る</button>
-              <button style={primaryBtn} disabled={loading} onClick={handleSubmit}>
+              <button style={primaryBtn} disabled={loading || uploadingKey !== null} onClick={handleSubmit}>
                 {loading ? "送信中..." : "送信する"}
               </button>
             </div>
