@@ -14,7 +14,11 @@ const CATEGORIES = [
   { v: "coloring", l: "カラー後のケア" },
 ];
 
+const NEW_BRAND_VALUE = "__new__";
+
 const EMPTY = {
+  brandId: "",
+  newBrandName: "",
   name: "",
   description: "",
   usage_text: "",
@@ -32,13 +36,22 @@ export default function AdminProductsPage() {
   const [saveMsg, setSaveMsg] = useState("");
   const [products, setProducts] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
+  const [brands, setBrands] = useState([]);
+
+  const [filterBrandId, setFilterBrandId] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
 
   const set = (k, v) => setForm((prev) => ({ ...prev, [k]: v }));
+
+  const loadBrands = async () => {
+    const { data } = await supabase.from("brands").select("id, name").order("name");
+    setBrands(data || []);
+  };
 
   const loadProducts = async () => {
     const { data } = await supabase
       .from("products")
-      .select("id, category, volume, price, stock, created_at, product_translations(name)")
+      .select("id, category, volume, price, stock, created_at, brand_id, brands(name), product_translations(name)")
       .order("created_at", { ascending: false });
     setProducts(data || []);
     setLoadingList(false);
@@ -57,6 +70,7 @@ export default function AdminProductsPage() {
         return;
       }
       setChecking(false);
+      loadBrands();
       loadProducts();
     };
     init();
@@ -73,9 +87,32 @@ export default function AdminProductsPage() {
       return;
     }
 
+    let brandId = form.brandId;
+
+    if (form.brandId === NEW_BRAND_VALUE) {
+      if (!form.newBrandName.trim()) {
+        setSaveMsg("新しいブランド名を入力してください");
+        setSaving(false);
+        return;
+      }
+      const { data: newBrand, error: brandError } = await supabase
+        .from("brands")
+        .insert({ name: form.newBrandName.trim() })
+        .select()
+        .single();
+
+      if (brandError) {
+        setSaveMsg("エラー（ブランド作成）: " + brandError.message);
+        setSaving(false);
+        return;
+      }
+      brandId = newBrand.id;
+    }
+
     const { data: newProduct, error: productError } = await supabase
       .from("products")
       .insert({
+        brand_id: brandId || null,
         category: form.category,
         volume: form.volume,
         price: form.price ? Number(form.price) : 0,
@@ -106,6 +143,7 @@ export default function AdminProductsPage() {
 
     setSaveMsg("商品を登録しました");
     setForm(EMPTY);
+    await loadBrands();
     await loadProducts();
     setSaving(false);
   };
@@ -132,11 +170,40 @@ export default function AdminProductsPage() {
       </main>
     );
 
+  const filteredProducts = products.filter((p) => {
+    if (filterBrandId && p.brand_id !== filterBrandId) return false;
+    if (filterCategory && p.category !== filterCategory) return false;
+    return true;
+  });
+
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 560, margin: "0 auto" }}>
       <h1 style={{ fontFamily: "serif", fontSize: 22, marginBottom: 20 }}>商品登録</h1>
 
       <form onSubmit={handleSubmit} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 18, marginBottom: 30 }}>
+        <label style={label}>ブランド</label>
+        <select value={form.brandId} onChange={(e) => set("brandId", e.target.value)} style={inputStyle}>
+          <option value="">選択してください</option>
+          {brands.map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.name}
+            </option>
+          ))}
+          <option value={NEW_BRAND_VALUE}>＋ 新しいブランドを追加</option>
+        </select>
+
+        {form.brandId === NEW_BRAND_VALUE && (
+          <>
+            <label style={label}>新しいブランド名</label>
+            <input
+              value={form.newBrandName}
+              onChange={(e) => set("newBrandName", e.target.value)}
+              style={inputStyle}
+              placeholder="例：MILBON"
+            />
+          </>
+        )}
+
         <label style={label}>カテゴリ</label>
         <select value={form.category} onChange={(e) => set("category", e.target.value)} style={inputStyle}>
           {CATEGORIES.map((c) => (
@@ -204,15 +271,36 @@ export default function AdminProductsPage() {
       </form>
 
       <h2 style={{ fontFamily: "serif", fontSize: 16, marginBottom: 12 }}>登録済みの商品</h2>
+
+      <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+        <select value={filterBrandId} onChange={(e) => setFilterBrandId(e.target.value)} style={{ ...inputStyle, marginBottom: 0, flex: 1 }}>
+          <option value="">すべてのブランド</option>
+          {brands.map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.name}
+            </option>
+          ))}
+        </select>
+        <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} style={{ ...inputStyle, marginBottom: 0, flex: 1 }}>
+          <option value="">すべてのカテゴリ</option>
+          {CATEGORIES.map((c) => (
+            <option key={c.v} value={c.v}>
+              {c.l}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {loadingList && <p style={{ fontSize: 13, color: "#8a8478" }}>読み込み中...</p>}
-      {!loadingList && products.length === 0 && <p style={{ fontSize: 13, color: "#8a8478" }}>まだ商品が登録されていません</p>}
+      {!loadingList && filteredProducts.length === 0 && <p style={{ fontSize: 13, color: "#8a8478" }}>該当する商品がありません</p>}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {products.map((p) => (
+        {filteredProducts.map((p) => (
           <div key={p.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <div style={{ fontSize: 13.5, fontWeight: 600 }}>{p.product_translations?.[0]?.name || "(名称未設定)"}</div>
               <div style={{ fontSize: 11.5, color: "#8a8478", marginTop: 2 }}>
+                {p.brands?.name ? `${p.brands.name} ・ ` : ""}
                 {p.volume} ・ {fmt(p.price)} ・ 在庫{p.stock}
               </div>
             </div>
