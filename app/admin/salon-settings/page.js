@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "../../../lib/supabaseClient";
 import { getMyRole } from "../../../lib/roleGuard";
+import { uploadSalonAsset } from "../../../lib/uploadSalonAsset";
 
 const EMPTY = {
   id: null,
@@ -14,6 +15,7 @@ const EMPTY = {
   bank_account_holder: "",
   bank_transfer_note: "",
   payment_confirmation_zalo_url: "",
+  qr_code_image_url: "",
 };
 
 export default function SalonSettingsPage() {
@@ -22,6 +24,7 @@ export default function SalonSettingsPage() {
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
+  const [uploadingQr, setUploadingQr] = useState(false);
 
   const set = (k, v) => setForm((prev) => ({ ...prev, [k]: v }));
 
@@ -47,6 +50,19 @@ export default function SalonSettingsPage() {
     init();
   }, []);
 
+  const handleQrChange = async (file) => {
+    if (!file) return;
+    setUploadingQr(true);
+    setSaveMsg("");
+    try {
+      const url = await uploadSalonAsset(file);
+      set("qr_code_image_url", url);
+    } catch (err) {
+      setSaveMsg("エラー（画像アップロード）: " + err.message);
+    }
+    setUploadingQr(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -60,6 +76,7 @@ export default function SalonSettingsPage() {
       bank_account_holder: form.bank_account_holder,
       bank_transfer_note: form.bank_transfer_note,
       payment_confirmation_zalo_url: form.payment_confirmation_zalo_url,
+      qr_code_image_url: form.qr_code_image_url || null,
     };
 
     let error;
@@ -144,6 +161,29 @@ export default function SalonSettingsPage() {
           style={{ ...inputStyle, resize: "none" }}
           placeholder="例：振込内容に注文番号をご記載ください"
         />
+
+        <label style={label}>振込用QRコード画像（任意）</label>
+        {form.qr_code_image_url ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <img src={form.qr_code_image_url} alt="QRコード" style={{ width: 90, height: 90, objectFit: "contain", borderRadius: 6, border: "1px solid #eee" }} />
+            <button
+              type="button"
+              onClick={() => set("qr_code_image_url", "")}
+              style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+            >
+              削除してやり直す
+            </button>
+          </div>
+        ) : (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleQrChange(e.target.files?.[0])}
+            disabled={uploadingQr}
+            style={{ fontSize: 12, marginBottom: 16 }}
+          />
+        )}
+        {uploadingQr && <p style={{ fontSize: 11, color: "#8a8478", marginBottom: 16 }}>アップロード中...</p>}
 
         <p style={sectionTitle}>Zaloでの入金確認（任意）</p>
         <label style={label}>入金確認用Zalo URL</label>
