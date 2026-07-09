@@ -9,6 +9,7 @@ export default function CheckoutPage() {
   const { id } = useParams();
   const router = useRouter();
   const [product, setProduct] = useState(null);
+  const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [saving, setSaving] = useState(false);
@@ -28,6 +29,14 @@ export default function CheckoutPage() {
       } else {
         setProduct(data);
       }
+
+      const { data: settingsData } = await supabase
+        .from("salon_settings")
+        .select("bank_name, bank_account_number, bank_account_holder, bank_transfer_note, payment_confirmation_zalo_url")
+        .limit(1)
+        .maybeSingle();
+      setSettings(settingsData || null);
+
       setLoading(false);
     };
     if (id) load();
@@ -35,7 +44,7 @@ export default function CheckoutPage() {
 
   const fmt = (n) => (n ? Number(n).toLocaleString("vi-VN") + " VND" : "");
 
-  const reportPaid = async () => {
+  const reportPaid = async (reportChannel = "app") => {
     setSaving(true);
     setErrorMsg("");
 
@@ -93,7 +102,7 @@ export default function CheckoutPage() {
       order_id: order.id,
       method: "bank_transfer",
       status: "reported",
-      report_channel: "app",
+      report_channel: reportChannel,
       customer_reported_at: new Date().toISOString(),
     });
 
@@ -148,23 +157,49 @@ export default function CheckoutPage() {
 
       <p style={{ fontSize: 12.5, color: "#8a8478", marginBottom: 10 }}>以下の口座にお振込みください</p>
       <div style={{ background: "#f7f4ee", borderRadius: 6, padding: 16, fontSize: 13, lineHeight: 2.1, marginBottom: 24 }}>
-        <div>銀行名：<b>Vietcombank</b></div>
-        <div>口座番号：<b>0123 4567 8901</b></div>
-        <div>口座名義：<b>CIEL SOWAL SALON</b></div>
-        <div style={{ fontSize: 11, color: "#8a8478", marginTop: 6 }}>※振込内容にお名前をご記載ください</div>
+        <div>銀行名：<b>{settings?.bank_name || "未設定"}</b></div>
+        <div>口座番号：<b>{settings?.bank_account_number || "未設定"}</b></div>
+        <div>口座名義：<b>{settings?.bank_account_holder || "未設定"}</b></div>
+        <div style={{ fontSize: 11, color: "#8a8478", marginTop: 6 }}>
+          {settings?.bank_transfer_note || "※振込内容にお名前をご記載ください"}
+        </div>
       </div>
 
       {errorMsg && <p style={{ fontSize: 13, color: "#b00", marginBottom: 12 }}>{errorMsg}</p>}
 
       <button
-        onClick={reportPaid}
+        onClick={() => reportPaid("app")}
         disabled={saving}
         style={{ width: "100%", padding: 15, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
       >
-        {saving ? "処理中..." : "振込みました"}
+        {saving ? "処理中..." : "アプリ内で「振込みました」と報告"}
       </button>
+
+      {settings?.payment_confirmation_zalo_url && (
+        <a
+          href={settings.payment_confirmation_zalo_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => reportPaid("zalo")}
+          style={{
+            display: "block",
+            textAlign: "center",
+            padding: 13,
+            marginTop: 10,
+            background: "transparent",
+            color: "#1b1b1b",
+            border: "1.5px solid #1b1b1b",
+            borderRadius: 4,
+            fontSize: 14,
+            textDecoration: "none",
+          }}
+        >
+          Zaloで送金確認を送る
+        </a>
+      )}
+
       <p style={{ fontSize: 11, color: "#8a8478", textAlign: "center", marginTop: 10 }}>
-        タップすると管理者に通知され、入金確認後に発送準備に進みます
+        どちらかで報告いただければ、確認後に発送準備に進みます
       </p>
     </main>
   );
