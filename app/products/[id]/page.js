@@ -17,7 +17,7 @@ export default function ProductDetailPage() {
     const load = async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id, volume, price, stock, category, product_translations(name, description, usage_text)")
+        .select("id, volume, price, stock, category, image_url, product_translations(name, description, usage_text)")
         .eq("id", id)
         .single();
 
@@ -45,7 +45,15 @@ export default function ProductDetailPage() {
         ← 戻る
       </Link>
 
-      <div style={{ background: "#f0ede5", borderRadius: 6, aspectRatio: "1.2", margin: "16px 0" }} />
+      {product.image_url ? (
+        <img
+          src={product.image_url}
+          alt=""
+          style={{ width: "100%", aspectRatio: "1.2", objectFit: "cover", borderRadius: 6, margin: "16px 0", display: "block" }}
+        />
+      ) : (
+        <div style={{ background: "#f0ede5", borderRadius: 6, aspectRatio: "1.2", margin: "16px 0" }} />
+      )}
 
       <h1 style={{ fontFamily: "serif", fontSize: 21, marginBottom: 8 }}>{t.name || "(商品名なし)"}</h1>
 
