@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { supabase } from "../../../lib/supabaseClient";
 import { getMyRole } from "../../../lib/roleGuard";
+import { uploadProductPhoto } from "../../../lib/uploadProductPhoto";
 
 const CATEGORIES = [
   { v: "shampoo", l: "シャンプー" },
@@ -26,6 +27,7 @@ const EMPTY = {
   volume: "",
   price: "",
   stock: "",
+  imageUrl: "",
 };
 
 export default function AdminProductsPage() {
@@ -40,8 +42,22 @@ export default function AdminProductsPage() {
 
   const [filterBrandId, setFilterBrandId] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const set = (k, v) => setForm((prev) => ({ ...prev, [k]: v }));
+
+  const handleImageChange = async (file) => {
+    if (!file) return;
+    setUploadingImage(true);
+    setSaveMsg("");
+    try {
+      const url = await uploadProductPhoto(file);
+      set("imageUrl", url);
+    } catch (err) {
+      setSaveMsg("エラー（画像アップロード）: " + err.message);
+    }
+    setUploadingImage(false);
+  };
 
   const loadBrands = async () => {
     const { data } = await supabase.from("brands").select("id, name").order("name");
@@ -51,7 +67,7 @@ export default function AdminProductsPage() {
   const loadProducts = async () => {
     const { data } = await supabase
       .from("products")
-      .select("id, category, volume, price, stock, created_at, brand_id, brands(name), product_translations(name)")
+      .select("id, category, volume, price, stock, created_at, brand_id, image_url, brands(name), product_translations(name)")
       .order("created_at", { ascending: false });
     setProducts(data || []);
     setLoadingList(false);
@@ -117,6 +133,7 @@ export default function AdminProductsPage() {
         volume: form.volume,
         price: form.price ? Number(form.price) : 0,
         stock: form.stock ? Number(form.stock) : 0,
+        image_url: form.imageUrl || null,
       })
       .select()
       .single();
@@ -203,6 +220,29 @@ export default function AdminProductsPage() {
             />
           </>
         )}
+
+        <label style={label}>商品画像</label>
+        {form.imageUrl ? (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <img src={form.imageUrl} alt="商品画像" style={{ width: 70, height: 70, objectFit: "cover", borderRadius: 6 }} />
+            <button
+              type="button"
+              onClick={() => set("imageUrl", "")}
+              style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+            >
+              削除してやり直す
+            </button>
+          </div>
+        ) : (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleImageChange(e.target.files?.[0])}
+            disabled={uploadingImage}
+            style={{ fontSize: 12, marginBottom: 16 }}
+          />
+        )}
+        {uploadingImage && <p style={{ fontSize: 11, color: "#8a8478", marginBottom: 16 }}>アップロード中...</p>}
 
         <label style={label}>カテゴリ</label>
         <select value={form.category} onChange={(e) => set("category", e.target.value)} style={inputStyle}>
@@ -297,11 +337,16 @@ export default function AdminProductsPage() {
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {filteredProducts.map((p) => (
           <div key={p.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div>
-              <div style={{ fontSize: 13.5, fontWeight: 600 }}>{p.product_translations?.[0]?.name || "(名称未設定)"}</div>
-              <div style={{ fontSize: 11.5, color: "#8a8478", marginTop: 2 }}>
-                {p.brands?.name ? `${p.brands.name} ・ ` : ""}
-                {p.volume} ・ {fmt(p.price)} ・ 在庫{p.stock}
+            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+              {p.image_url && (
+                <img src={p.image_url} alt="" style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 4, flexShrink: 0 }} />
+              )}
+              <div>
+                <div style={{ fontSize: 13.5, fontWeight: 600 }}>{p.product_translations?.[0]?.name || "(名称未設定)"}</div>
+                <div style={{ fontSize: 11.5, color: "#8a8478", marginTop: 2 }}>
+                  {p.brands?.name ? `${p.brands.name} ・ ` : ""}
+                  {p.volume} ・ {fmt(p.price)} ・ 在庫{p.stock}
+                </div>
               </div>
             </div>
             <button
