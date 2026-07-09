@@ -60,6 +60,17 @@ export default function Home() {
       >
         商品一覧を見る
       </Link>
+
+      <Link
+        href="/stylists"
+        style={{
+          color: "#1b1b1b",
+          fontSize: 13,
+          textDecoration: "underline",
+        }}
+      >
+        スタイリスト紹介を見る
+      </Link>
     </main>
   );
 }
