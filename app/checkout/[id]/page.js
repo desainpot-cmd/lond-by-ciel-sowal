@@ -32,7 +32,7 @@ export default function CheckoutPage() {
 
       const { data: settingsData } = await supabase
         .from("salon_settings")
-        .select("bank_name, bank_account_number, bank_account_holder, bank_transfer_note, payment_confirmation_zalo_url")
+        .select("bank_name, bank_account_number, bank_account_holder, bank_transfer_note, payment_confirmation_zalo_url, qr_code_image_url")
         .limit(1)
         .maybeSingle();
       setSettings(settingsData || null);
@@ -164,6 +164,17 @@ export default function CheckoutPage() {
           {settings?.bank_transfer_note || "※振込内容にお名前をご記載ください"}
         </div>
       </div>
+
+      {settings?.qr_code_image_url && (
+        <div style={{ textAlign: "center", marginBottom: 24 }}>
+          <img
+            src={settings.qr_code_image_url}
+            alt="振込用QRコード"
+            style={{ width: 180, height: 180, objectFit: "contain", border: "1px solid #e6e1d6", borderRadius: 6, padding: 8 }}
+          />
+          <p style={{ fontSize: 11, color: "#8a8478", marginTop: 8 }}>QRコードを読み取ってお振込みいただくこともできます</p>
+        </div>
+      )}
 
       {errorMsg && <p style={{ fontSize: 13, color: "#b00", marginBottom: 12 }}>{errorMsg}</p>}
 
