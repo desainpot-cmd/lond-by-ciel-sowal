@@ -49,6 +49,17 @@ export default function Home() {
       >
         あなたへの提案を見る
       </Link>
+
+      <Link
+        href="/products"
+        style={{
+          color: "#1b1b1b",
+          fontSize: 13,
+          textDecoration: "underline",
+        }}
+      >
+        商品一覧を見る
+      </Link>
     </main>
   );
 }
