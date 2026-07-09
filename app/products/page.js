@@ -29,7 +29,7 @@ export default function ProductsPage() {
 
       const { data: productData } = await supabase
         .from("products")
-        .select("id, category, volume, price, stock, brand_id, brands(name), product_translations(name)")
+        .select("id, category, volume, price, stock, brand_id, image_url, brands(name), product_translations(name)")
         .order("created_at", { ascending: false });
       setProducts(productData || []);
       setLoading(false);
@@ -91,14 +91,22 @@ export default function ProductsPage() {
             href={`/products/${p.id}`}
             style={{ textDecoration: "none", color: "#1b1b1b" }}
           >
-            <div
-              style={{
-                background: SWATCHES[i % SWATCHES.length],
-                borderRadius: 6,
-                aspectRatio: "1",
-                marginBottom: 8,
-              }}
-            />
+            {p.image_url ? (
+              <img
+                src={p.image_url}
+                alt=""
+                style={{ width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: 6, marginBottom: 8, display: "block" }}
+              />
+            ) : (
+              <div
+                style={{
+                  background: SWATCHES[i % SWATCHES.length],
+                  borderRadius: 6,
+                  aspectRatio: "1",
+                  marginBottom: 8,
+                }}
+              />
+            )}
             {p.brands?.name && (
               <div style={{ fontSize: 10.5, color: "#8a8478", marginBottom: 2 }}>{p.brands.name}</div>
             )}
