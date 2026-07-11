@@ -71,6 +71,17 @@ export default function Home() {
       >
         スタイリスト紹介を見る
       </Link>
+
+      <Link
+        href="/history"
+        style={{
+          color: "#1b1b1b",
+          fontSize: 13,
+          textDecoration: "underline",
+        }}
+      >
+        購入履歴を見る
+      </Link>
     </main>
   );
 }
