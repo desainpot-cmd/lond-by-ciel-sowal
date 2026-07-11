@@ -82,6 +82,13 @@ export default function AdminOrdersPage() {
     setProcessingId(null);
   };
 
+  const advanceShipping = async (order, nextStatus) => {
+    setProcessingId(order.id);
+    await supabase.from("orders").update({ status: nextStatus }).eq("id", order.id);
+    await load();
+    setProcessingId(null);
+  };
+
   const fmt = (n) => (n ? Number(n).toLocaleString("vi-VN") + " VND" : "");
 
   if (loading) return <main style={{ padding: 32 }}>読み込み中...</main>;
@@ -159,6 +166,7 @@ export default function AdminOrdersPage() {
                   borderRadius: 4,
                   fontSize: 13,
                   cursor: canConfirm ? "pointer" : "default",
+                  marginBottom: o.status === "preparing" || o.status === "shipping" ? 8 : 0,
                 }}
               >
                 {processingId === o.id
@@ -167,6 +175,26 @@ export default function AdminOrdersPage() {
                   ? "入金確認して発送準備にする"
                   : STATUS_LABEL[o.status] || o.status}
               </button>
+
+              {o.status === "preparing" && (
+                <button
+                  onClick={() => advanceShipping(o, "shipping")}
+                  disabled={processingId === o.id}
+                  style={{ width: "100%", padding: 12, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 13, cursor: "pointer" }}
+                >
+                  {processingId === o.id ? "処理中..." : "発送中にする"}
+                </button>
+              )}
+
+              {o.status === "shipping" && (
+                <button
+                  onClick={() => advanceShipping(o, "delivered")}
+                  disabled={processingId === o.id}
+                  style={{ width: "100%", padding: 12, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 13, cursor: "pointer" }}
+                >
+                  {processingId === o.id ? "処理中..." : "配達完了にする"}
+                </button>
+              )}
             </div>
           );
         })}
