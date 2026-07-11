@@ -124,8 +124,14 @@ export default function CheckoutPage() {
             入金確認後、発送準備に進みます。今しばらくお待ちください。
           </p>
           <Link
+            href={`/delivery/${orderId}`}
+            style={{ display: "block", padding: "12px 24px", background: "#1b1b1b", color: "#fff", borderRadius: 4, textDecoration: "none", fontSize: 13, marginBottom: 10 }}
+          >
+            配送状況を見る
+          </Link>
+          <Link
             href="/proposals"
-            style={{ display: "inline-block", padding: "12px 24px", background: "#1b1b1b", color: "#fff", borderRadius: 4, textDecoration: "none", fontSize: 13 }}
+            style={{ display: "block", padding: "12px 24px", background: "transparent", color: "#1b1b1b", border: "1.5px solid #1b1b1b", borderRadius: 4, textDecoration: "none", fontSize: 13 }}
           >
             提案一覧に戻る
           </Link>
