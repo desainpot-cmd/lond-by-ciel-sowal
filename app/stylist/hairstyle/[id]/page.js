@@ -13,6 +13,13 @@ const LABELS = {
   hair_volume: { few: "少ない", medium: "普通", many: "多い" },
   gender: { female: "女性", male: "男性", other: "その他/回答しない" },
   period: { within_3m: "3ヶ月以内", "3_6m": "半年以内", "6_12m": "1年以内", over_1y: "1年以上前" },
+  budget_range: {
+    under_300k: "〜30万VND",
+    "300k_600k": "30〜60万VND",
+    "600k_1m": "60〜100万VND",
+    over_1m: "100万VND〜",
+    flexible: "こだわらない",
+  },
 };
 
 function Row({ label, value }) {
@@ -241,8 +248,10 @@ export default function StylistHairstyleDetailPage() {
       </div>
 
       <div style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16, marginBottom: 20 }}>
-        <Row label="なりたいイメージ" value={record.desired_result} />
+        <Row label="なりたいイメージ" value={record.desired_style_tags?.join("、")} />
+        <Row label="補足" value={record.desired_result} />
         <Row label="検討中メニュー" value={record.interested_menu_categories?.join("、")} />
+        <Row label="ご予算" value={LABELS.budget_range[record.budget_range]} />
       </div>
 
       <div style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16, marginBottom: 20 }}>
