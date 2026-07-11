@@ -16,6 +16,11 @@ export default function CheckoutPage() {
   const [orderId, setOrderId] = useState(null);
   const [done, setDone] = useState(false);
 
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponMsg, setCouponMsg] = useState("");
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
+
   useEffect(() => {
     const load = async () => {
       const { data, error } = await supabase
@@ -43,6 +48,69 @@ export default function CheckoutPage() {
   }, [id]);
 
   const fmt = (n) => (n ? Number(n).toLocaleString("vi-VN") + " VND" : "");
+
+  const finalPrice = (() => {
+    if (!product) return 0;
+    if (!appliedCoupon) return product.price;
+    if (appliedCoupon.discount_type === "percent") {
+      const discounted = product.price - Math.round((product.price * appliedCoupon.discount_value) / 100);
+      return Math.max(discounted, 0);
+    }
+    return Math.max(product.price - appliedCoupon.discount_value, 0);
+  })();
+
+  const applyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setApplyingCoupon(true);
+    setCouponMsg("");
+
+    const code = couponInput.trim().toUpperCase();
+    const { data: coupon, error } = await supabase
+      .from("coupons")
+      .select("*")
+      .eq("code", code)
+      .maybeSingle();
+
+    if (error || !coupon) {
+      setCouponMsg("そのクーポンコードは見つかりませんでした");
+      setApplyingCoupon(false);
+      return;
+    }
+
+    const now = new Date();
+    if (coupon.valid_from && new Date(coupon.valid_from) > now) {
+      setCouponMsg("このクーポンはまだ利用開始前です");
+      setApplyingCoupon(false);
+      return;
+    }
+    if (coupon.valid_to && new Date(coupon.valid_to) < now) {
+      setCouponMsg("このクーポンの有効期限が切れています");
+      setApplyingCoupon(false);
+      return;
+    }
+
+    if (coupon.usage_limit) {
+      const { count } = await supabase
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .eq("coupon_id", coupon.id);
+      if ((count || 0) >= coupon.usage_limit) {
+        setCouponMsg("このクーポンは利用上限に達しています");
+        setApplyingCoupon(false);
+        return;
+      }
+    }
+
+    setAppliedCoupon(coupon);
+    setCouponMsg("クーポンを適用しました");
+    setApplyingCoupon(false);
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponInput("");
+    setCouponMsg("");
+  };
 
   const reportPaid = async (reportChannel = "app") => {
     setSaving(true);
@@ -79,8 +147,9 @@ export default function CheckoutPage() {
       .from("orders")
       .insert({
         customer_id: profile.id,
-        total_amount: product.price,
+        total_amount: finalPrice,
         status: "payment_reported",
+        coupon_id: appliedCoupon?.id || null,
       })
       .select()
       .single();
@@ -95,7 +164,7 @@ export default function CheckoutPage() {
       order_id: order.id,
       product_id: product.id,
       quantity: 1,
-      unit_price: product.price,
+      unit_price: finalPrice,
     });
 
     await supabase.from("payments").insert({
@@ -155,10 +224,47 @@ export default function CheckoutPage() {
           <span>{t.name}（{product.volume}）</span>
           <span>{fmt(product.price)}</span>
         </div>
+        {appliedCoupon && (
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#b8926b", marginBottom: 8 }}>
+            <span>クーポン（{appliedCoupon.code}）</span>
+            <span>−{fmt(product.price - finalPrice)}</span>
+          </div>
+        )}
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 15, fontWeight: 600 }}>
           <span>合計</span>
-          <span>{fmt(product.price)}</span>
+          <span>{fmt(finalPrice)}</span>
         </div>
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        {appliedCoupon ? (
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f7f4ee", borderRadius: 4, padding: "10px 14px" }}>
+            <span style={{ fontSize: 13 }}>「{appliedCoupon.code}」を適用中</span>
+            <button
+              onClick={removeCoupon}
+              style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+            >
+              削除
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: "flex", gap: 8 }}>
+            <input
+              value={couponInput}
+              onChange={(e) => setCouponInput(e.target.value)}
+              placeholder="クーポンコードをお持ちの方"
+              style={{ flex: 1, padding: 11, border: "1px solid #ccc", borderRadius: 4, fontSize: 13, boxSizing: "border-box" }}
+            />
+            <button
+              onClick={applyCoupon}
+              disabled={applyingCoupon}
+              style={{ padding: "0 18px", background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 13, cursor: "pointer" }}
+            >
+              {applyingCoupon ? "確認中..." : "適用"}
+            </button>
+          </div>
+        )}
+        {couponMsg && <p style={{ fontSize: 11.5, color: appliedCoupon ? "#1b1b1b" : "#b00", marginTop: 6 }}>{couponMsg}</p>}
       </div>
 
       <p style={{ fontSize: 12.5, color: "#8a8478", marginBottom: 10 }}>以下の口座にお振込みください</p>
