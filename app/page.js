@@ -57,7 +57,7 @@ export default function Home() {
         <h1 style={{ fontFamily: "serif", fontSize: 28, marginBottom: 4 }}>
           Lond by Ciel Sowal
         </h1>
-        <p style={{ color: "#8a8478", fontSize: 13 }}>
+        <p style={{ color: "var(--color-beige-gray)", fontSize: 13 }}>
           ONLINE HAIR COUNSELING（開発中）
         </p>
       </div>
@@ -65,8 +65,8 @@ export default function Home() {
       <Link
         href="/login"
         style={{
-          background: "#1b1b1b",
-          color: "#fff",
+          background: "var(--color-black)",
+          color: "var(--color-bg)",
           padding: "14px 28px",
           borderRadius: 4,
           textDecoration: "none",
@@ -79,7 +79,7 @@ export default function Home() {
       <Link
         href="/proposals"
         style={{
-          color: "#1b1b1b",
+          color: "var(--color-text)",
           fontSize: 13,
           textDecoration: "underline",
         }}
@@ -90,7 +90,7 @@ export default function Home() {
       <Link
         href="/products"
         style={{
-          color: "#1b1b1b",
+          color: "var(--color-text)",
           fontSize: 13,
           textDecoration: "underline",
         }}
@@ -101,7 +101,7 @@ export default function Home() {
       <Link
         href="/stylists"
         style={{
-          color: "#1b1b1b",
+          color: "var(--color-text)",
           fontSize: 13,
           textDecoration: "underline",
         }}
@@ -112,7 +112,7 @@ export default function Home() {
       <Link
         href="/history"
         style={{
-          color: "#1b1b1b",
+          color: "var(--color-text)",
           fontSize: 13,
           textDecoration: "underline",
         }}
