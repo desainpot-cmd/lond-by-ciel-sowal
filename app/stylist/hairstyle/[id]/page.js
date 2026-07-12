@@ -26,7 +26,7 @@ function Row({ label, value }) {
   if (value === null || value === undefined || value === "") return null;
   return (
     <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #f0ede5" }}>
-      <span style={{ fontSize: 12, color: "#8a8478" }}>{label}</span>
+      <span style={{ fontSize: 12, color: "var(--color-beige-gray)" }}>{label}</span>
       <span style={{ fontSize: 13, textAlign: "right", maxWidth: "60%" }}>{value}</span>
     </div>
   );
@@ -209,7 +209,7 @@ export default function StylistHairstyleDetailPage() {
     return (
       <main style={{ minHeight: "100vh", padding: 32, textAlign: "center" }}>
         <p style={{ fontSize: 14, marginTop: 80 }}>このページを見る権限がありません。</p>
-        <Link href="/" style={{ fontSize: 13, color: "#8a8478" }}>
+        <Link href="/" style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>
           ホームに戻る
         </Link>
       </main>
@@ -226,35 +226,35 @@ export default function StylistHairstyleDetailPage() {
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 560, margin: "0 auto" }}>
-      <Link href="/stylist" style={{ fontSize: 12, color: "#8a8478", textDecoration: "none" }}>
+      <Link href="/stylist" style={{ fontSize: 12, color: "var(--color-beige-gray)", textDecoration: "none" }}>
         ← 一覧に戻る
       </Link>
 
       <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "14px 0 4px" }}>
         <h1 style={{ fontFamily: "serif", fontSize: 20, margin: 0 }}>{c.name || "お名前未設定"} 様</h1>
-        <span style={{ fontSize: 10.5, padding: "3px 9px", borderRadius: 999, background: "#b8926b", color: "#fff" }}>
+        <span style={{ fontSize: 10.5, padding: "3px 9px", borderRadius: 999, background: "var(--color-accent)", color: "var(--color-bg)" }}>
           髪型カウンセリング
         </span>
       </div>
-      <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 20 }}>
+      <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 20 }}>
         {new Date(record.created_at).toLocaleString("ja-JP")}
       </p>
 
-      <div style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16, marginBottom: 20 }}>
+      <div style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16, marginBottom: 20 }}>
         <Row label="年齢" value={c.age ? `${c.age}歳` : null} />
         <Row label="性別" value={LABELS.gender[c.gender]} />
         <Row label="電話番号" value={c.phone} />
         <Row label="指名スタイリスト" value={preferredStylistName || "おまかせ"} />
       </div>
 
-      <div style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16, marginBottom: 20 }}>
+      <div style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16, marginBottom: 20 }}>
         <Row label="なりたいイメージ" value={record.desired_style_tags?.join("、")} />
         <Row label="補足" value={record.desired_result} />
         <Row label="検討中メニュー" value={record.interested_menu_categories?.join("、")} />
         <Row label="ご予算" value={LABELS.budget_range[record.budget_range]} />
       </div>
 
-      <div style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16, marginBottom: 20 }}>
+      <div style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16, marginBottom: 20 }}>
         <Row label="髪の長さ" value={LABELS.hair_length[record.hair_length]} />
         <Row label="髪質" value={LABELS.hair_type[record.hair_type]} />
         <Row label="太さ" value={LABELS.hair_thickness[record.hair_thickness]} />
@@ -263,7 +263,7 @@ export default function StylistHairstyleDetailPage() {
         <Row label="ダメージレベル" value={record.damage_level ? `${record.damage_level} / 5` : null} />
       </div>
 
-      <div style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16, marginBottom: 20 }}>
+      <div style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16, marginBottom: 20 }}>
         <Row
           label="ブリーチ"
           value={record.bleach_history === true ? `あり（${LABELS.period[record.bleach_last_done] || "-"}）` : record.bleach_history === false ? "なし" : null}
@@ -286,7 +286,7 @@ export default function StylistHairstyleDetailPage() {
 
       {photos.length > 0 && (
         <div style={{ marginBottom: 20 }}>
-          <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 8 }}>アップロードされた写真</p>
+          <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 8 }}>アップロードされた写真</p>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
             {photos.map((p) => (
               <div key={p.id} style={{ textAlign: "center" }}>
@@ -295,7 +295,7 @@ export default function StylistHairstyleDetailPage() {
                   alt={p.angle}
                   style={{ width: 90, height: 90, objectFit: "cover", borderRadius: 6, display: "block", marginBottom: 4 }}
                 />
-                <span style={{ fontSize: 10.5, color: "#8a8478" }}>
+                <span style={{ fontSize: 10.5, color: "var(--color-beige-gray)" }}>
                   {p.angle === "reference" ? "参考写真" : p.angle === "curl" ? "くせ部分" : "ダメージ部分"}
                 </span>
               </div>
@@ -311,8 +311,8 @@ export default function StylistHairstyleDetailPage() {
           style={{
             flex: 1,
             padding: 14,
-            background: record.status === "pending" ? "#1b1b1b" : "#eee",
-            color: record.status === "pending" ? "#fff" : "#8a8478",
+            background: record.status === "pending" ? "var(--color-black)" : "#eee",
+            color: record.status === "pending" ? "var(--color-bg)" : "var(--color-beige-gray)",
             border: "none",
             borderRadius: 4,
             fontSize: 14,
@@ -325,10 +325,10 @@ export default function StylistHairstyleDetailPage() {
 
       <h2 style={{ fontFamily: "serif", fontSize: 18, marginBottom: 12 }}>メニューを提案する</h2>
 
-      <div style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16, marginBottom: 20 }}>
+      <div style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16, marginBottom: 20 }}>
         {Object.entries(menusByCategory).map(([category, items]) => (
           <div key={category} style={{ marginBottom: 16 }}>
-            <p style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 8, color: "#8a8478" }}>{category}</p>
+            <p style={{ fontSize: 12.5, fontWeight: 600, marginBottom: 8, color: "var(--color-beige-gray)" }}>{category}</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {items.map((m) => (
                 <label
@@ -338,7 +338,7 @@ export default function StylistHairstyleDetailPage() {
                     justifyContent: "space-between",
                     alignItems: "center",
                     padding: "10px 12px",
-                    border: `1.5px solid ${selectedMenuIds.includes(m.id) ? "#1b1b1b" : "#eee"}`,
+                    border: `1.5px solid ${selectedMenuIds.includes(m.id) ? "var(--color-black)" : "#eee"}`,
                     borderRadius: 6,
                     cursor: "pointer",
                     fontSize: 13,
@@ -352,7 +352,7 @@ export default function StylistHairstyleDetailPage() {
                     />
                     {m.name}
                   </span>
-                  <span style={{ color: "#8a8478", fontSize: 12 }}>
+                  <span style={{ color: "var(--color-beige-gray)", fontSize: 12 }}>
                     {fmt(m.price)}
                     {m.price_note || ""}
                   </span>
@@ -367,19 +367,19 @@ export default function StylistHairstyleDetailPage() {
           <span>{fmt(totalPrice)}</span>
         </div>
 
-        <label style={{ fontSize: 12, color: "#8a8478", display: "block", marginBottom: 8 }}>お客様へのコメント</label>
+        <label style={{ fontSize: 12, color: "var(--color-beige-gray)", display: "block", marginBottom: 8 }}>お客様へのコメント</label>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           rows={3}
           placeholder="例：ご希望のイメージに近づけるには、カット＋縮毛矯正がおすすめです。"
-          style={{ width: "100%", padding: 12, border: "1px solid #ccc", borderRadius: 4, fontSize: 14, marginBottom: 16, boxSizing: "border-box", resize: "none" }}
+          style={{ width: "100%", padding: 12, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 14, marginBottom: 16, boxSizing: "border-box", resize: "none" }}
         />
 
         <button
           onClick={submitProposal}
           disabled={saving}
-          style={{ width: "100%", padding: 14, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
+          style={{ width: "100%", padding: 14, background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
         >
           {saving ? "送信中..." : "この提案を送る"}
         </button>
@@ -391,7 +391,7 @@ export default function StylistHairstyleDetailPage() {
           <h2 style={{ fontFamily: "serif", fontSize: 16, marginBottom: 10 }}>これまでの提案</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {proposals.map((p) => (
-              <div key={p.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 14 }}>
+              <div key={p.id} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 14 }}>
                 <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>合計 {fmt(p.total_price)}</div>
                 <div style={{ fontSize: 12 }}>{p.comment}</div>
               </div>
