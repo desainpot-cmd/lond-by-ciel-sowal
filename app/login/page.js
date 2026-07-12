@@ -49,6 +49,8 @@ export default function LoginPage() {
         alignItems: "center",
         justifyContent: "center",
         padding: 24,
+        background: "var(--color-bg)",
+        color: "var(--color-text)",
       }}
     >
       <div style={{ width: "100%", maxWidth: 360 }}>
@@ -65,7 +67,7 @@ export default function LoginPage() {
             required
             style={{
               padding: 12,
-              border: "1px solid #ccc",
+              border: "1px solid var(--color-beige-border)",
               borderRadius: 4,
               fontSize: 14,
             }}
@@ -79,7 +81,7 @@ export default function LoginPage() {
             minLength={6}
             style={{
               padding: 12,
-              border: "1px solid #ccc",
+              border: "1px solid var(--color-beige-border)",
               borderRadius: 4,
               fontSize: 14,
             }}
@@ -89,8 +91,8 @@ export default function LoginPage() {
             disabled={loading}
             style={{
               padding: 14,
-              background: "#1b1b1b",
-              color: "#fff",
+              background: "var(--color-black)",
+              color: "var(--color-bg)",
               border: "none",
               borderRadius: 4,
               fontSize: 14,
