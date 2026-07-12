@@ -48,15 +48,15 @@ export default function ProductsPage() {
   const selectStyle = {
     flex: 1,
     padding: 11,
-    border: "1px solid #ccc",
+    border: "1px solid var(--color-beige-border)",
     borderRadius: 4,
     fontSize: 13,
-    background: "#fff",
+    background: "var(--color-bg)",
   };
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 640, margin: "0 auto" }}>
-      <Link href="/" style={{ fontSize: 12, color: "#8a8478", textDecoration: "none" }}>
+      <Link href="/" style={{ fontSize: 12, color: "var(--color-beige-gray)", textDecoration: "none" }}>
         ← ホームに戻る
       </Link>
 
@@ -81,15 +81,15 @@ export default function ProductsPage() {
         </select>
       </div>
 
-      {loading && <p style={{ fontSize: 13, color: "#8a8478" }}>読み込み中...</p>}
-      {!loading && filtered.length === 0 && <p style={{ fontSize: 13, color: "#8a8478" }}>該当する商品がありません</p>}
+      {loading && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>}
+      {!loading && filtered.length === 0 && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>該当する商品がありません</p>}
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14 }}>
         {filtered.map((p, i) => (
           <Link
             key={p.id}
             href={`/products/${p.id}`}
-            style={{ textDecoration: "none", color: "#1b1b1b" }}
+            style={{ textDecoration: "none", color: "var(--color-text)" }}
           >
             {p.image_url ? (
               <img
@@ -108,12 +108,12 @@ export default function ProductsPage() {
               />
             )}
             {p.brands?.name && (
-              <div style={{ fontSize: 10.5, color: "#8a8478", marginBottom: 2 }}>{p.brands.name}</div>
+              <div style={{ fontSize: 10.5, color: "var(--color-beige-gray)", marginBottom: 2 }}>{p.brands.name}</div>
             )}
             <div style={{ fontSize: 12.5, fontWeight: 600, lineHeight: 1.4, marginBottom: 4 }}>
               {p.product_translations?.[0]?.name || "(名称未設定)"}
             </div>
-            <div style={{ fontSize: 11, color: "#8a8478", marginBottom: 2 }}>{p.volume}</div>
+            <div style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 2 }}>{p.volume}</div>
             <div style={{ fontSize: 13, fontWeight: 600 }}>{fmt(p.price)}</div>
             {p.stock <= 0 && (
               <div style={{ fontSize: 10.5, color: "#b00", marginTop: 2 }}>在庫なし</div>
