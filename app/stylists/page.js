@@ -31,21 +31,21 @@ export default function StylistsPage() {
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 480, margin: "0 auto" }}>
-      <Link href="/" style={{ fontSize: 12, color: "#8a8478", textDecoration: "none" }}>
+      <Link href="/" style={{ fontSize: 12, color: "var(--color-beige-gray)", textDecoration: "none" }}>
         ← ホームに戻る
       </Link>
 
       <h1 style={{ fontFamily: "serif", fontSize: 22, margin: "16px 0 20px" }}>スタイリスト紹介</h1>
 
-      {loading && <p style={{ fontSize: 13, color: "#8a8478" }}>読み込み中...</p>}
+      {loading && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>}
 
       {!loading && stylists.length === 0 && (
-        <p style={{ fontSize: 13, color: "#8a8478" }}>現在、紹介できるスタイリスト情報がありません。</p>
+        <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>現在、紹介できるスタイリスト情報がありません。</p>
       )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 30 }}>
         {stylists.map((s) => (
-          <div key={s.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16 }}>
+          <div key={s.id} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16 }}>
             <div style={{ display: "flex", gap: 12, marginBottom: 10 }}>
               {s.photo_url ? (
                 <img
@@ -59,7 +59,7 @@ export default function StylistsPage() {
               <div>
                 <div style={{ fontSize: 14.5, fontWeight: 600 }}>{s.display_name}</div>
                 {s.years_experience && (
-                  <div style={{ fontSize: 11.5, color: "#8a8478", marginTop: 3 }}>経験{s.years_experience}年</div>
+                  <div style={{ fontSize: 11.5, color: "var(--color-beige-gray)", marginTop: 3 }}>経験{s.years_experience}年</div>
                 )}
               </div>
             </div>
@@ -69,7 +69,7 @@ export default function StylistsPage() {
                 {s.specialties.map((sp) => (
                   <span
                     key={sp}
-                    style={{ fontSize: 10.5, border: "1px solid #e6e1d6", borderRadius: 999, padding: "4px 10px", color: "#8a8478" }}
+                    style={{ fontSize: 10.5, border: "1px solid var(--color-beige-border)", borderRadius: 999, padding: "4px 10px", color: "var(--color-beige-gray)" }}
                   >
                     {sp}
                   </span>
@@ -77,10 +77,10 @@ export default function StylistsPage() {
               </div>
             )}
 
-            {s.bio && <p style={{ fontSize: 12, color: "#8a8478", lineHeight: 1.7, marginBottom: s.instagram_url ? 10 : 0 }}>{s.bio}</p>}
+            {s.bio && <p style={{ fontSize: 12, color: "var(--color-beige-gray)", lineHeight: 1.7, marginBottom: s.instagram_url ? 10 : 0 }}>{s.bio}</p>}
 
             {s.instagram_url && (
-              <a href={s.instagram_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11.5, color: "#b8926b" }}>
+              <a href={s.instagram_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11.5, color: "var(--color-accent)" }}>
                 Instagramを見る →
               </a>
             )}
@@ -97,8 +97,8 @@ export default function StylistsPage() {
             display: "block",
             textAlign: "center",
             padding: 15,
-            background: "#1b1b1b",
-            color: "#fff",
+            background: "var(--color-black)",
+            color: "var(--color-bg)",
             borderRadius: 4,
             fontSize: 14,
             textDecoration: "none",
@@ -107,11 +107,11 @@ export default function StylistsPage() {
           {bookingLink.booking_link_label || "オンラインブッキングへ進む"}
         </a>
       ) : (
-        <p style={{ fontSize: 11.5, color: "#8a8478", textAlign: "center" }}>
+        <p style={{ fontSize: 11.5, color: "var(--color-beige-gray)", textAlign: "center" }}>
           予約リンクは準備中です。サロンまで直接お問い合わせください。
         </p>
       )}
-      <p style={{ fontSize: 10.5, color: "#8a8478", textAlign: "center", marginTop: 8 }}>
+      <p style={{ fontSize: 10.5, color: "var(--color-beige-gray)", textAlign: "center", marginTop: 8 }}>
         ※サロン共通の予約先です
       </p>
     </main>
