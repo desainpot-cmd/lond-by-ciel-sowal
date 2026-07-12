@@ -203,14 +203,14 @@ export default function HairstyleCounselingPage() {
   const wrap = { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 24px" };
   const box = { width: "100%", maxWidth: 380 };
   const h1 = { fontFamily: "serif", fontSize: 20, marginBottom: 20 };
-  const label = { fontSize: 12, color: "#8a8478", marginBottom: 8, display: "block" };
+  const label = { fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 8, display: "block" };
   const tagRow = { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 };
-  const inputStyle = { width: "100%", padding: 12, border: "1px solid #ccc", borderRadius: 4, fontSize: 14, marginBottom: 20, boxSizing: "border-box" };
+  const inputStyle = { width: "100%", padding: 12, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 14, marginBottom: 20, boxSizing: "border-box" };
   const btnRow = { display: "flex", gap: 10, marginTop: 10 };
-  const primaryBtn = { flex: 1, padding: 14, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" };
-  const ghostBtn = { flex: 1, padding: 14, background: "transparent", color: "#1b1b1b", border: "1.5px solid #1b1b1b", borderRadius: 4, fontSize: 14, cursor: "pointer" };
+  const primaryBtn = { flex: 1, padding: 14, background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" };
+  const ghostBtn = { flex: 1, padding: 14, background: "transparent", color: "var(--color-black)", border: "1.5px solid var(--color-black)", borderRadius: 4, fontSize: 14, cursor: "pointer" };
   const progress = { height: 4, background: "#eee", borderRadius: 2, marginBottom: 24, overflow: "hidden" };
-  const progressFill = { height: "100%", background: "#1b1b1b", width: `${(step / TOTAL_STEPS) * 100}%` };
+  const progressFill = { height: "100%", background: "var(--color-black)", width: `${(step / TOTAL_STEPS) * 100}%` };
 
   const Tag = ({ selected, onClick, children, style }) => (
     <button
@@ -219,9 +219,9 @@ export default function HairstyleCounselingPage() {
       style={{
         padding: "9px 14px",
         borderRadius: 999,
-        border: `1px solid ${selected ? "#1b1b1b" : "#ccc"}`,
-        background: selected ? "#1b1b1b" : "transparent",
-        color: selected ? "#fff" : "#1b1b1b",
+        border: `1px solid ${selected ? "var(--color-black)" : "var(--color-beige-border)"}`,
+        background: selected ? "var(--color-black)" : "transparent",
+        color: selected ? "var(--color-bg)" : "var(--color-black)",
         fontSize: 13,
         cursor: "pointer",
         ...style,
@@ -236,7 +236,7 @@ export default function HairstyleCounselingPage() {
       <main style={wrap}>
         <div style={{ ...box, textAlign: "center", marginTop: 80 }}>
           <h1 style={h1}>送信しました</h1>
-          <p style={{ fontSize: 13, color: "#8a8478", lineHeight: 1.8 }}>
+          <p style={{ fontSize: 13, color: "var(--color-beige-gray)", lineHeight: 1.8 }}>
             スタイリストが内容を確認し、実現可能なメニューと料金をご提案します。
           </p>
         </div>
@@ -272,12 +272,12 @@ export default function HairstyleCounselingPage() {
         <div style={progress}>
           <div style={progressFill} />
         </div>
-        <p style={{ fontSize: 11, color: "#8a8478", marginBottom: 8 }}>STEP {step} / {TOTAL_STEPS}</p>
+        <p style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 8 }}>STEP {step} / {TOTAL_STEPS}</p>
 
         {step === 1 && (
           <>
             <h1 style={h1}>なりたい髪型のイメージ</h1>
-            <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 16 }}>複数選択できます</p>
+            <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 16 }}>複数選択できます</p>
             <div style={tagRow}>
               {STYLE_TAGS.map((t) => (
                 <Tag key={t} selected={a.desired_style_tags.includes(t)} onClick={() => set("desired_style_tags", toggle(a.desired_style_tags, t))}>
@@ -301,7 +301,7 @@ export default function HairstyleCounselingPage() {
                 <button
                   type="button"
                   onClick={() => setPhotos((p) => ({ ...p, reference: null }))}
-                  style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+                  style={{ fontSize: 12, color: "var(--color-beige-gray)", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
                 >
                   削除してやり直す
                 </button>
@@ -315,7 +315,7 @@ export default function HairstyleCounselingPage() {
                 style={{ fontSize: 12, marginBottom: 16 }}
               />
             )}
-            {uploadingKey === "reference" && <p style={{ fontSize: 11, color: "#8a8478", marginBottom: 16 }}>アップロード中...</p>}
+            {uploadingKey === "reference" && <p style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 16 }}>アップロード中...</p>}
             {errorMsg && <p style={{ fontSize: 13, color: "#b00", marginBottom: 12 }}>{errorMsg}</p>}
             <div style={btnRow}>
               <button style={primaryBtn} onClick={next}>次へ</button>
@@ -326,7 +326,7 @@ export default function HairstyleCounselingPage() {
         {step === 2 && (
           <>
             <h1 style={h1}>気になる・検討中のメニュー</h1>
-            <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 16 }}>複数選択できます</p>
+            <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 16 }}>複数選択できます</p>
             <div style={tagRow}>
               {MENU_CATEGORIES.map((c) => (
                 <Tag key={c} selected={a.interested_menu_categories.includes(c)} onClick={() => set("interested_menu_categories", toggle(a.interested_menu_categories, c))}>
@@ -344,7 +344,7 @@ export default function HairstyleCounselingPage() {
         {step === 3 && (
           <>
             <h1 style={h1}>ご予算の目安</h1>
-            <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 16 }}>だいたいの目安で大丈夫です</p>
+            <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 16 }}>だいたいの目安で大丈夫です</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
               {BUDGET_RANGES.map((b) => (
                 <div
@@ -352,7 +352,7 @@ export default function HairstyleCounselingPage() {
                   onClick={() => set("budget_range", b.v)}
                   style={{
                     padding: 14,
-                    border: `1.5px solid ${a.budget_range === b.v ? "#1b1b1b" : "#e6e1d6"}`,
+                    border: `1.5px solid ${a.budget_range === b.v ? "var(--color-black)" : "var(--color-beige-border)"}`,
                     borderRadius: 6,
                     cursor: "pointer",
                     fontSize: 13.5,
@@ -440,7 +440,7 @@ export default function HairstyleCounselingPage() {
                     <button
                       type="button"
                       onClick={() => setPhotos((p) => ({ ...p, [key]: null }))}
-                      style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+                      style={{ fontSize: 12, color: "var(--color-beige-gray)", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
                     >
                       削除してやり直す
                     </button>
@@ -454,7 +454,7 @@ export default function HairstyleCounselingPage() {
                     style={{ fontSize: 12 }}
                   />
                 )}
-                {uploadingKey === key && <p style={{ fontSize: 11, color: "#8a8478" }}>アップロード中...</p>}
+                {uploadingKey === key && <p style={{ fontSize: 11, color: "var(--color-beige-gray)" }}>アップロード中...</p>}
               </div>
             ))}
 
@@ -470,7 +470,7 @@ export default function HairstyleCounselingPage() {
         {step === 6 && (
           <>
             <h1 style={h1}>スタイリストを選ぶ</h1>
-            <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 16 }}>
+            <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 16 }}>
               指名したいスタイリストがいれば選んでください。「おまかせ」でも大丈夫です。
             </p>
 
@@ -479,7 +479,7 @@ export default function HairstyleCounselingPage() {
                 onClick={() => set("preferred_stylist_id", null)}
                 style={{
                   padding: 14,
-                  border: `1.5px solid ${a.preferred_stylist_id === null ? "#1b1b1b" : "#e6e1d6"}`,
+                  border: `1.5px solid ${a.preferred_stylist_id === null ? "var(--color-black)" : "var(--color-beige-border)"}`,
                   borderRadius: 6,
                   cursor: "pointer",
                   fontSize: 13,
@@ -495,24 +495,24 @@ export default function HairstyleCounselingPage() {
                   onClick={() => set("preferred_stylist_id", s.id)}
                   style={{
                     padding: 14,
-                    border: `1.5px solid ${a.preferred_stylist_id === s.id ? "#1b1b1b" : "#e6e1d6"}`,
+                    border: `1.5px solid ${a.preferred_stylist_id === s.id ? "var(--color-black)" : "var(--color-beige-border)"}`,
                     borderRadius: 6,
                     cursor: "pointer",
                   }}
                 >
                   <div style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 4 }}>{s.display_name}</div>
                   {s.years_experience && (
-                    <div style={{ fontSize: 11.5, color: "#8a8478", marginBottom: 4 }}>経験{s.years_experience}年</div>
+                    <div style={{ fontSize: 11.5, color: "var(--color-beige-gray)", marginBottom: 4 }}>経験{s.years_experience}年</div>
                   )}
                   {s.specialties?.length > 0 && (
-                    <div style={{ fontSize: 11, color: "#8a8478" }}>{s.specialties.join("、")}</div>
+                    <div style={{ fontSize: 11, color: "var(--color-beige-gray)" }}>{s.specialties.join("、")}</div>
                   )}
-                  {s.bio && <div style={{ fontSize: 11.5, color: "#8a8478", marginTop: 6, lineHeight: 1.6 }}>{s.bio}</div>}
+                  {s.bio && <div style={{ fontSize: 11.5, color: "var(--color-beige-gray)", marginTop: 6, lineHeight: 1.6 }}>{s.bio}</div>}
                 </div>
               ))}
 
               {stylists.length === 0 && (
-                <p style={{ fontSize: 12, color: "#8a8478" }}>現在登録されているスタイリストがいません。おまかせで進めます。</p>
+                <p style={{ fontSize: 12, color: "var(--color-beige-gray)" }}>現在登録されているスタイリストがいません。おまかせで進めます。</p>
               )}
             </div>
 
