@@ -173,15 +173,15 @@ export default function AdminProductsPage() {
 
   const fmt = (n) => (n ? Number(n).toLocaleString("vi-VN") + " VND" : "0 VND");
 
-  const inputStyle = { width: "100%", padding: 12, border: "1px solid #ccc", borderRadius: 4, fontSize: 14, marginBottom: 16, boxSizing: "border-box" };
-  const label = { fontSize: 12, color: "#8a8478", marginBottom: 6, display: "block" };
+  const inputStyle = { width: "100%", padding: 12, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 14, marginBottom: 16, boxSizing: "border-box" };
+  const label = { fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 6, display: "block" };
 
   if (checking) return <main style={{ padding: 32 }}>読み込み中...</main>;
   if (denied)
     return (
       <main style={{ minHeight: "100vh", padding: 32, textAlign: "center" }}>
         <p style={{ fontSize: 14, marginTop: 80 }}>このページを見る権限がありません。</p>
-        <Link href="/" style={{ fontSize: 13, color: "#8a8478" }}>
+        <Link href="/" style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>
           ホームに戻る
         </Link>
       </main>
@@ -197,7 +197,7 @@ export default function AdminProductsPage() {
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 560, margin: "0 auto" }}>
       <h1 style={{ fontFamily: "serif", fontSize: 22, marginBottom: 20 }}>商品登録</h1>
 
-      <form onSubmit={handleSubmit} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 18, marginBottom: 30 }}>
+      <form onSubmit={handleSubmit} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 18, marginBottom: 30 }}>
         <label style={label}>ブランド</label>
         <select value={form.brandId} onChange={(e) => set("brandId", e.target.value)} style={inputStyle}>
           <option value="">選択してください</option>
@@ -228,7 +228,7 @@ export default function AdminProductsPage() {
             <button
               type="button"
               onClick={() => set("imageUrl", "")}
-              style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+              style={{ fontSize: 12, color: "var(--color-beige-gray)", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
             >
               削除してやり直す
             </button>
@@ -242,7 +242,7 @@ export default function AdminProductsPage() {
             style={{ fontSize: 12, marginBottom: 16 }}
           />
         )}
-        {uploadingImage && <p style={{ fontSize: 11, color: "#8a8478", marginBottom: 16 }}>アップロード中...</p>}
+        {uploadingImage && <p style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 16 }}>アップロード中...</p>}
 
         <label style={label}>カテゴリ</label>
         <select value={form.category} onChange={(e) => set("category", e.target.value)} style={inputStyle}>
@@ -299,12 +299,12 @@ export default function AdminProductsPage() {
           </div>
         </div>
 
-        {saveMsg && <p style={{ fontSize: 13, color: saveMsg.startsWith("エラー") ? "#b00" : "#1b1b1b", marginBottom: 12 }}>{saveMsg}</p>}
+        {saveMsg && <p style={{ fontSize: 13, color: saveMsg.startsWith("エラー") ? "#b00" : "var(--color-text)", marginBottom: 12 }}>{saveMsg}</p>}
 
         <button
           type="submit"
           disabled={saving}
-          style={{ width: "100%", padding: 14, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
+          style={{ width: "100%", padding: 14, background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
         >
           {saving ? "登録中..." : "この商品を登録する"}
         </button>
@@ -331,19 +331,19 @@ export default function AdminProductsPage() {
         </select>
       </div>
 
-      {loadingList && <p style={{ fontSize: 13, color: "#8a8478" }}>読み込み中...</p>}
-      {!loadingList && filteredProducts.length === 0 && <p style={{ fontSize: 13, color: "#8a8478" }}>該当する商品がありません</p>}
+      {loadingList && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>}
+      {!loadingList && filteredProducts.length === 0 && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>該当する商品がありません</p>}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {filteredProducts.map((p) => (
-          <div key={p.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div key={p.id} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
               {p.image_url && (
                 <img src={p.image_url} alt="" style={{ width: 44, height: 44, objectFit: "cover", borderRadius: 4, flexShrink: 0 }} />
               )}
               <div>
                 <div style={{ fontSize: 13.5, fontWeight: 600 }}>{p.product_translations?.[0]?.name || "(名称未設定)"}</div>
-                <div style={{ fontSize: 11.5, color: "#8a8478", marginTop: 2 }}>
+                <div style={{ fontSize: 11.5, color: "var(--color-beige-gray)", marginTop: 2 }}>
                   {p.brands?.name ? `${p.brands.name} ・ ` : ""}
                   {p.volume} ・ {fmt(p.price)} ・ 在庫{p.stock}
                 </div>
