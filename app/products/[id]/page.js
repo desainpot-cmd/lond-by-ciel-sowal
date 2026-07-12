@@ -41,7 +41,7 @@ export default function ProductDetailPage() {
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 480, margin: "0 auto" }}>
-      <Link href="/proposals" style={{ fontSize: 12, color: "#8a8478", textDecoration: "none" }}>
+      <Link href="/proposals" style={{ fontSize: 12, color: "var(--color-beige-gray)", textDecoration: "none" }}>
         ← 戻る
       </Link>
 
@@ -59,7 +59,7 @@ export default function ProductDetailPage() {
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div style={{ fontSize: 16, fontWeight: 600 }}>{fmt(product.price)}</div>
-        <div style={{ fontSize: 11.5, color: "#8a8478" }}>
+        <div style={{ fontSize: 11.5, color: "var(--color-beige-gray)" }}>
           {product.volume} ・ {product.stock > 0 ? "在庫あり" : "在庫なし"}
         </div>
       </div>
@@ -76,9 +76,9 @@ export default function ProductDetailPage() {
               flex: 1,
               padding: "9px 0",
               borderRadius: 999,
-              border: `1px solid ${tab === key ? "#1b1b1b" : "#ccc"}`,
-              background: tab === key ? "#1b1b1b" : "transparent",
-              color: tab === key ? "#fff" : "#1b1b1b",
+              border: `1px solid ${tab === key ? "var(--color-black)" : "var(--color-beige-border)"}`,
+              background: tab === key ? "var(--color-black)" : "transparent",
+              color: tab === key ? "var(--color-bg)" : "var(--color-black)",
               fontSize: 13,
               cursor: "pointer",
             }}
@@ -88,7 +88,7 @@ export default function ProductDetailPage() {
         ))}
       </div>
 
-      <p style={{ fontSize: 13, color: "#8a8478", lineHeight: 1.8, minHeight: 70, marginBottom: 24 }}>
+      <p style={{ fontSize: 13, color: "var(--color-beige-gray)", lineHeight: 1.8, minHeight: 70, marginBottom: 24 }}>
         {tab === "desc" ? t.description : t.usage_text}
       </p>
 
@@ -98,8 +98,8 @@ export default function ProductDetailPage() {
         style={{
           width: "100%",
           padding: 15,
-          background: product.stock > 0 ? "#1b1b1b" : "#ccc",
-          color: "#fff",
+          background: product.stock > 0 ? "var(--color-black)" : "var(--color-beige-border)",
+          color: "var(--color-bg)",
           border: "none",
           borderRadius: 4,
           fontSize: 14,
