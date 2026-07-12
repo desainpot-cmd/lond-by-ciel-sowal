@@ -96,7 +96,7 @@ export default function AdminOrdersPage() {
     return (
       <main style={{ minHeight: "100vh", padding: 32, textAlign: "center" }}>
         <p style={{ fontSize: 14, marginTop: 80 }}>このページを見る権限がありません。</p>
-        <Link href="/" style={{ fontSize: 13, color: "#8a8478" }}>
+        <Link href="/" style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>
           ホームに戻る
         </Link>
       </main>
@@ -107,14 +107,14 @@ export default function AdminOrdersPage() {
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 680, margin: "0 auto" }}>
       <h1 style={{ fontFamily: "serif", fontSize: 22, marginBottom: 20 }}>注文管理</h1>
 
-      {orders.length === 0 && <p style={{ fontSize: 13, color: "#8a8478" }}>まだ注文がありません</p>}
+      {orders.length === 0 && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>まだ注文がありません</p>}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {orders.map((o) => {
           const payment = o.payments?.[0];
           const canConfirm = o.status === "payment_reported";
           return (
-            <div key={o.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16 }}>
+            <div key={o.id} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16 }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
                 <span style={{ fontSize: 14, fontWeight: 600 }}>
                   {o.customer_profiles?.name || "お名前未設定"}
@@ -124,15 +124,15 @@ export default function AdminOrdersPage() {
                     fontSize: 11,
                     padding: "3px 10px",
                     borderRadius: 999,
-                    background: canConfirm ? "#1b1b1b" : "#eee",
-                    color: canConfirm ? "#fff" : "#1b1b1b",
+                    background: canConfirm ? "var(--color-black)" : "#eee",
+                    color: canConfirm ? "var(--color-bg)" : "var(--color-black)",
                   }}
                 >
                   {STATUS_LABEL[o.status] || o.status}
                 </span>
               </div>
 
-              <div style={{ fontSize: 12, color: "#8a8478", marginBottom: 8 }}>
+              <div style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 8 }}>
                 {new Date(o.created_at).toLocaleString("ja-JP")}
               </div>
 
@@ -147,7 +147,7 @@ export default function AdminOrdersPage() {
               <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 10 }}>合計 {fmt(o.total_amount)}</div>
 
               {payment && (
-                <div style={{ fontSize: 11.5, color: "#8a8478", marginBottom: 10 }}>
+                <div style={{ fontSize: 11.5, color: "var(--color-beige-gray)", marginBottom: 10 }}>
                   報告経路：{payment.report_channel === "zalo" ? "Zalo" : "アプリ内"}
                   {payment.customer_reported_at &&
                     ` ／ 報告日時：${new Date(payment.customer_reported_at).toLocaleString("ja-JP")}`}
@@ -160,8 +160,8 @@ export default function AdminOrdersPage() {
                 style={{
                   width: "100%",
                   padding: 12,
-                  background: canConfirm ? "#1b1b1b" : "#eee",
-                  color: canConfirm ? "#fff" : "#8a8478",
+                  background: canConfirm ? "var(--color-black)" : "#eee",
+                  color: canConfirm ? "var(--color-bg)" : "var(--color-beige-gray)",
                   border: "none",
                   borderRadius: 4,
                   fontSize: 13,
@@ -180,7 +180,7 @@ export default function AdminOrdersPage() {
                 <button
                   onClick={() => advanceShipping(o, "shipping")}
                   disabled={processingId === o.id}
-                  style={{ width: "100%", padding: 12, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 13, cursor: "pointer" }}
+                  style={{ width: "100%", padding: 12, background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 13, cursor: "pointer" }}
                 >
                   {processingId === o.id ? "処理中..." : "発送中にする"}
                 </button>
@@ -190,7 +190,7 @@ export default function AdminOrdersPage() {
                 <button
                   onClick={() => advanceShipping(o, "delivered")}
                   disabled={processingId === o.id}
-                  style={{ width: "100%", padding: 12, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 13, cursor: "pointer" }}
+                  style={{ width: "100%", padding: 12, background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 13, cursor: "pointer" }}
                 >
                   {processingId === o.id ? "処理中..." : "配達完了にする"}
                 </button>
