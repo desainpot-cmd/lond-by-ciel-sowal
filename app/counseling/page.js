@@ -24,7 +24,7 @@ export default function CounselingChoicePage() {
   if (checking) {
     return (
       <main style={{ minHeight: "100vh", padding: 32 }}>
-        <p style={{ fontSize: 13, color: "#8a8478" }}>読み込み中...</p>
+        <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>
       </main>
     );
   }
@@ -45,7 +45,7 @@ export default function CounselingChoicePage() {
         <h1 style={{ fontFamily: "serif", fontSize: 22, marginBottom: 8 }}>
           今日は何をしたいですか？
         </h1>
-        <p style={{ fontSize: 12.5, color: "#8a8478" }}>あなたに合った内容をご案内します</p>
+        <p style={{ fontSize: 12.5, color: "var(--color-beige-gray)" }}>あなたに合った内容をご案内します</p>
       </div>
 
       <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -54,14 +54,14 @@ export default function CounselingChoicePage() {
           style={{
             display: "block",
             padding: 22,
-            border: "1px solid #e6e1d6",
+            border: "1px solid var(--color-beige-border)",
             borderRadius: 8,
             textDecoration: "none",
-            color: "#1b1b1b",
+            color: "var(--color-text)",
           }}
         >
           <div style={{ fontFamily: "serif", fontSize: 17, marginBottom: 6 }}>商品を探す</div>
-          <div style={{ fontSize: 12, color: "#8a8478", lineHeight: 1.7 }}>
+          <div style={{ fontSize: 12, color: "var(--color-beige-gray)", lineHeight: 1.7 }}>
             髪質に合ったシャンプー・トリートメントなどをご提案します
           </div>
         </Link>
@@ -71,14 +71,14 @@ export default function CounselingChoicePage() {
           style={{
             display: "block",
             padding: 22,
-            border: "1px solid #e6e1d6",
+            border: "1px solid var(--color-beige-border)",
             borderRadius: 8,
             textDecoration: "none",
-            color: "#1b1b1b",
+            color: "var(--color-text)",
           }}
         >
           <div style={{ fontFamily: "serif", fontSize: 17, marginBottom: 6 }}>髪型の相談をする</div>
-          <div style={{ fontSize: 12, color: "#8a8478", lineHeight: 1.7 }}>
+          <div style={{ fontSize: 12, color: "var(--color-beige-gray)", lineHeight: 1.7 }}>
             なりたい髪型を伝えて、スタイリストからメニュー・料金の提案を受けられます
           </div>
         </Link>
