@@ -188,19 +188,19 @@ export default function CheckoutPage() {
       <main style={{ minHeight: "100vh", padding: 32, maxWidth: 480, margin: "0 auto", textAlign: "center" }}>
         <div style={{ marginTop: 80 }}>
           <h1 style={{ fontFamily: "serif", fontSize: 20, marginBottom: 10 }}>ご注文ありがとうございます</h1>
-          <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 30 }}>注文番号：{orderId}</p>
-          <p style={{ fontSize: 12.5, color: "#8a8478", lineHeight: 1.8, marginBottom: 30 }}>
+          <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 30 }}>注文番号：{orderId}</p>
+          <p style={{ fontSize: 12.5, color: "var(--color-beige-gray)", lineHeight: 1.8, marginBottom: 30 }}>
             入金確認後、発送準備に進みます。今しばらくお待ちください。
           </p>
           <Link
             href={`/delivery/${orderId}`}
-            style={{ display: "block", padding: "12px 24px", background: "#1b1b1b", color: "#fff", borderRadius: 4, textDecoration: "none", fontSize: 13, marginBottom: 10 }}
+            style={{ display: "block", padding: "12px 24px", background: "var(--color-black)", color: "var(--color-bg)", borderRadius: 4, textDecoration: "none", fontSize: 13, marginBottom: 10 }}
           >
             配送状況を見る
           </Link>
           <Link
             href="/proposals"
-            style={{ display: "block", padding: "12px 24px", background: "transparent", color: "#1b1b1b", border: "1.5px solid #1b1b1b", borderRadius: 4, textDecoration: "none", fontSize: 13 }}
+            style={{ display: "block", padding: "12px 24px", background: "transparent", color: "var(--color-black)", border: "1.5px solid var(--color-black)", borderRadius: 4, textDecoration: "none", fontSize: 13 }}
           >
             提案一覧に戻る
           </Link>
@@ -213,19 +213,19 @@ export default function CheckoutPage() {
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 480, margin: "0 auto" }}>
-      <Link href={`/products/${id}`} style={{ fontSize: 12, color: "#8a8478", textDecoration: "none" }}>
+      <Link href={`/products/${id}`} style={{ fontSize: 12, color: "var(--color-beige-gray)", textDecoration: "none" }}>
         ← 戻る
       </Link>
 
       <h1 style={{ fontFamily: "serif", fontSize: 20, margin: "16px 0 20px" }}>お支払い案内</h1>
 
-      <div style={{ borderBottom: "1px solid #e6e1d6", paddingBottom: 14, marginBottom: 20 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#8a8478", marginBottom: 8 }}>
+      <div style={{ borderBottom: "1px solid var(--color-beige-border)", paddingBottom: 14, marginBottom: 20 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--color-beige-gray)", marginBottom: 8 }}>
           <span>{t.name}（{product.volume}）</span>
           <span>{fmt(product.price)}</span>
         </div>
         {appliedCoupon && (
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "#b8926b", marginBottom: 8 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--color-accent)", marginBottom: 8 }}>
             <span>クーポン（{appliedCoupon.code}）</span>
             <span>−{fmt(product.price - finalPrice)}</span>
           </div>
@@ -238,11 +238,11 @@ export default function CheckoutPage() {
 
       <div style={{ marginBottom: 20 }}>
         {appliedCoupon ? (
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f7f4ee", borderRadius: 4, padding: "10px 14px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--color-beige-light)", borderRadius: 4, padding: "10px 14px" }}>
             <span style={{ fontSize: 13 }}>「{appliedCoupon.code}」を適用中</span>
             <button
               onClick={removeCoupon}
-              style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+              style={{ fontSize: 12, color: "var(--color-beige-gray)", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
             >
               削除
             </button>
@@ -253,26 +253,26 @@ export default function CheckoutPage() {
               value={couponInput}
               onChange={(e) => setCouponInput(e.target.value)}
               placeholder="クーポンコードをお持ちの方"
-              style={{ flex: 1, padding: 11, border: "1px solid #ccc", borderRadius: 4, fontSize: 13, boxSizing: "border-box" }}
+              style={{ flex: 1, padding: 11, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 13, boxSizing: "border-box" }}
             />
             <button
               onClick={applyCoupon}
               disabled={applyingCoupon}
-              style={{ padding: "0 18px", background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 13, cursor: "pointer" }}
+              style={{ padding: "0 18px", background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 13, cursor: "pointer" }}
             >
               {applyingCoupon ? "確認中..." : "適用"}
             </button>
           </div>
         )}
-        {couponMsg && <p style={{ fontSize: 11.5, color: appliedCoupon ? "#1b1b1b" : "#b00", marginTop: 6 }}>{couponMsg}</p>}
+        {couponMsg && <p style={{ fontSize: 11.5, color: appliedCoupon ? "var(--color-text)" : "#b00", marginTop: 6 }}>{couponMsg}</p>}
       </div>
 
-      <p style={{ fontSize: 12.5, color: "#8a8478", marginBottom: 10 }}>以下の口座にお振込みください</p>
-      <div style={{ background: "#f7f4ee", borderRadius: 6, padding: 16, fontSize: 13, lineHeight: 2.1, marginBottom: 24 }}>
+      <p style={{ fontSize: 12.5, color: "var(--color-beige-gray)", marginBottom: 10 }}>以下の口座にお振込みください</p>
+      <div style={{ background: "var(--color-beige-light)", borderRadius: 6, padding: 16, fontSize: 13, lineHeight: 2.1, marginBottom: 24 }}>
         <div>銀行名：<b>{settings?.bank_name || "未設定"}</b></div>
         <div>口座番号：<b>{settings?.bank_account_number || "未設定"}</b></div>
         <div>口座名義：<b>{settings?.bank_account_holder || "未設定"}</b></div>
-        <div style={{ fontSize: 11, color: "#8a8478", marginTop: 6 }}>
+        <div style={{ fontSize: 11, color: "var(--color-beige-gray)", marginTop: 6 }}>
           {settings?.bank_transfer_note || "※振込内容にお名前をご記載ください"}
         </div>
       </div>
@@ -282,9 +282,9 @@ export default function CheckoutPage() {
           <img
             src={settings.qr_code_image_url}
             alt="振込用QRコード"
-            style={{ width: 180, height: 180, objectFit: "contain", border: "1px solid #e6e1d6", borderRadius: 6, padding: 8 }}
+            style={{ width: 180, height: 180, objectFit: "contain", border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 8 }}
           />
-          <p style={{ fontSize: 11, color: "#8a8478", marginTop: 8 }}>QRコードを読み取ってお振込みいただくこともできます</p>
+          <p style={{ fontSize: 11, color: "var(--color-beige-gray)", marginTop: 8 }}>QRコードを読み取ってお振込みいただくこともできます</p>
         </div>
       )}
 
@@ -293,7 +293,7 @@ export default function CheckoutPage() {
       <button
         onClick={() => reportPaid("app")}
         disabled={saving}
-        style={{ width: "100%", padding: 15, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
+        style={{ width: "100%", padding: 15, background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
       >
         {saving ? "処理中..." : "アプリ内で「振込みました」と報告"}
       </button>
@@ -310,8 +310,8 @@ export default function CheckoutPage() {
             padding: 13,
             marginTop: 10,
             background: "transparent",
-            color: "#1b1b1b",
-            border: "1.5px solid #1b1b1b",
+            color: "var(--color-black)",
+            border: "1.5px solid var(--color-black)",
             borderRadius: 4,
             fontSize: 14,
             textDecoration: "none",
@@ -321,7 +321,7 @@ export default function CheckoutPage() {
         </a>
       )}
 
-      <p style={{ fontSize: 11, color: "#8a8478", textAlign: "center", marginTop: 10 }}>
+      <p style={{ fontSize: 11, color: "var(--color-beige-gray)", textAlign: "center", marginTop: 10 }}>
         どちらかで報告いただければ、確認後に発送準備に進みます
       </p>
     </main>
