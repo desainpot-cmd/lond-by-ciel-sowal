@@ -105,15 +105,15 @@ export default function AdminBannersPage() {
     await loadBanners();
   };
 
-  const inputStyle = { width: "100%", padding: 12, border: "1px solid #ccc", borderRadius: 4, fontSize: 14, marginBottom: 16, boxSizing: "border-box" };
-  const label = { fontSize: 12, color: "#8a8478", marginBottom: 6, display: "block" };
+  const inputStyle = { width: "100%", padding: 12, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 14, marginBottom: 16, boxSizing: "border-box" };
+  const label = { fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 6, display: "block" };
 
   if (checking) return <main style={{ padding: 32 }}>読み込み中...</main>;
   if (denied)
     return (
       <main style={{ minHeight: "100vh", padding: 32, textAlign: "center" }}>
         <p style={{ fontSize: 14, marginTop: 80 }}>このページを見る権限がありません。</p>
-        <Link href="/" style={{ fontSize: 13, color: "#8a8478" }}>
+        <Link href="/" style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>
           ホームに戻る
         </Link>
       </main>
@@ -123,7 +123,7 @@ export default function AdminBannersPage() {
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 480, margin: "0 auto" }}>
       <h1 style={{ fontFamily: "serif", fontSize: 22, marginBottom: 20 }}>バナー管理</h1>
 
-      <form onSubmit={handleSubmit} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 18, marginBottom: 30 }}>
+      <form onSubmit={handleSubmit} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 18, marginBottom: 30 }}>
         <label style={label}>バナー画像</label>
         {form.imageUrl ? (
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
@@ -131,7 +131,7 @@ export default function AdminBannersPage() {
             <button
               type="button"
               onClick={() => set("imageUrl", "")}
-              style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+              style={{ fontSize: 12, color: "var(--color-beige-gray)", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
             >
               削除してやり直す
             </button>
@@ -145,7 +145,7 @@ export default function AdminBannersPage() {
             style={{ fontSize: 12, marginBottom: 16 }}
           />
         )}
-        {uploadingImage && <p style={{ fontSize: 11, color: "#8a8478", marginBottom: 16 }}>アップロード中...</p>}
+        {uploadingImage && <p style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 16 }}>アップロード中...</p>}
 
         <label style={label}>リンク先URL（任意）</label>
         <input value={form.link_url} onChange={(e) => set("link_url", e.target.value)} style={inputStyle} placeholder="例：/products" />
@@ -174,32 +174,32 @@ export default function AdminBannersPage() {
           公開する
         </label>
 
-        {saveMsg && <p style={{ fontSize: 13, color: saveMsg.startsWith("エラー") ? "#b00" : "#1b1b1b", margin: "12px 0" }}>{saveMsg}</p>}
+        {saveMsg && <p style={{ fontSize: 13, color: saveMsg.startsWith("エラー") ? "#b00" : "var(--color-text)", margin: "12px 0" }}>{saveMsg}</p>}
 
         <button
           type="submit"
           disabled={saving}
-          style={{ width: "100%", padding: 14, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer", marginTop: 8 }}
+          style={{ width: "100%", padding: 14, background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer", marginTop: 8 }}
         >
           {saving ? "登録中..." : "このバナーを登録する"}
         </button>
       </form>
 
       <h2 style={{ fontFamily: "serif", fontSize: 16, marginBottom: 12 }}>登録済みのバナー</h2>
-      {loadingList && <p style={{ fontSize: 13, color: "#8a8478" }}>読み込み中...</p>}
-      {!loadingList && banners.length === 0 && <p style={{ fontSize: 13, color: "#8a8478" }}>まだバナーがありません</p>}
+      {loadingList && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>}
+      {!loadingList && banners.length === 0 && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>まだバナーがありません</p>}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {banners.map((b) => (
-          <div key={b.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 14, display: "flex", gap: 12, alignItems: "center" }}>
+          <div key={b.id} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 14, display: "flex", gap: 12, alignItems: "center" }}>
             <img src={b.image_url} alt="" style={{ width: 70, height: 40, objectFit: "cover", borderRadius: 4, flexShrink: 0 }} />
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12.5 }}>表示順：{b.display_order} {b.link_url ? `・ リンク先：${b.link_url}` : ""}</div>
-              <div style={{ fontSize: 11.5, color: "#8a8478", marginTop: 2 }}>{b.is_active ? "公開中" : "非公開"}</div>
+              <div style={{ fontSize: 11.5, color: "var(--color-beige-gray)", marginTop: 2 }}>{b.is_active ? "公開中" : "非公開"}</div>
             </div>
             <button
               onClick={() => toggleActive(b)}
-              style={{ fontSize: 11.5, color: "#1b1b1b", background: "none", border: "1px solid #ccc", borderRadius: 4, padding: "6px 10px", cursor: "pointer" }}
+              style={{ fontSize: 11.5, color: "var(--color-black)", background: "none", border: "1px solid var(--color-beige-border)", borderRadius: 4, padding: "6px 10px", cursor: "pointer" }}
             >
               {b.is_active ? "非公開にする" : "公開する"}
             </button>
