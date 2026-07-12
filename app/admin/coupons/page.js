@@ -93,15 +93,15 @@ export default function AdminCouponsPage() {
   const fmtDiscount = (c) => (c.discount_type === "percent" ? `${c.discount_value}%オフ` : `${Number(c.discount_value).toLocaleString("vi-VN")} VND オフ`);
   const fmtDate = (d) => (d ? new Date(d).toLocaleDateString("ja-JP") : "指定なし");
 
-  const inputStyle = { width: "100%", padding: 12, border: "1px solid #ccc", borderRadius: 4, fontSize: 14, marginBottom: 16, boxSizing: "border-box" };
-  const label = { fontSize: 12, color: "#8a8478", marginBottom: 6, display: "block" };
+  const inputStyle = { width: "100%", padding: 12, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 14, marginBottom: 16, boxSizing: "border-box" };
+  const label = { fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 6, display: "block" };
 
   if (checking) return <main style={{ padding: 32 }}>読み込み中...</main>;
   if (denied)
     return (
       <main style={{ minHeight: "100vh", padding: 32, textAlign: "center" }}>
         <p style={{ fontSize: 14, marginTop: 80 }}>このページを見る権限がありません。</p>
-        <Link href="/" style={{ fontSize: 13, color: "#8a8478" }}>
+        <Link href="/" style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>
           ホームに戻る
         </Link>
       </main>
@@ -111,7 +111,7 @@ export default function AdminCouponsPage() {
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 480, margin: "0 auto" }}>
       <h1 style={{ fontFamily: "serif", fontSize: 22, marginBottom: 20 }}>クーポン管理</h1>
 
-      <form onSubmit={handleSubmit} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 18, marginBottom: 30 }}>
+      <form onSubmit={handleSubmit} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 18, marginBottom: 30 }}>
         <label style={label}>クーポンコード</label>
         <input value={form.code} onChange={(e) => set("code", e.target.value)} style={inputStyle} placeholder="例：WELCOME10" />
 
@@ -148,27 +148,27 @@ export default function AdminCouponsPage() {
           placeholder="例：100"
         />
 
-        {saveMsg && <p style={{ fontSize: 13, color: saveMsg.startsWith("エラー") ? "#b00" : "#1b1b1b", marginBottom: 12 }}>{saveMsg}</p>}
+        {saveMsg && <p style={{ fontSize: 13, color: saveMsg.startsWith("エラー") ? "#b00" : "var(--color-text)", marginBottom: 12 }}>{saveMsg}</p>}
 
         <button
           type="submit"
           disabled={saving}
-          style={{ width: "100%", padding: 14, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
+          style={{ width: "100%", padding: 14, background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
         >
           {saving ? "作成中..." : "このクーポンを作成する"}
         </button>
       </form>
 
       <h2 style={{ fontFamily: "serif", fontSize: 16, marginBottom: 12 }}>登録済みのクーポン</h2>
-      {loadingList && <p style={{ fontSize: 13, color: "#8a8478" }}>読み込み中...</p>}
-      {!loadingList && coupons.length === 0 && <p style={{ fontSize: 13, color: "#8a8478" }}>まだクーポンがありません</p>}
+      {loadingList && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>}
+      {!loadingList && coupons.length === 0 && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>まだクーポンがありません</p>}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {coupons.map((c) => (
-          <div key={c.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div key={c.id} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
               <div style={{ fontSize: 13.5, fontWeight: 600 }}>{c.code}</div>
-              <div style={{ fontSize: 11.5, color: "#8a8478", marginTop: 2 }}>
+              <div style={{ fontSize: 11.5, color: "var(--color-beige-gray)", marginTop: 2 }}>
                 {fmtDiscount(c)} ・ {fmtDate(c.valid_from)}〜{fmtDate(c.valid_to)} ・ 上限{c.usage_limit ?? "無制限"}
               </div>
             </div>
