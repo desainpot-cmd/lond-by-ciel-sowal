@@ -56,17 +56,17 @@ export default function DeliveryStatusPage() {
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 480, margin: "0 auto" }}>
-      <Link href="/history" style={{ fontSize: 12, color: "#8a8478", textDecoration: "none" }}>
+      <Link href="/history" style={{ fontSize: 12, color: "var(--color-beige-gray)", textDecoration: "none" }}>
         ← 購入履歴に戻る
       </Link>
 
       <h1 style={{ fontFamily: "serif", fontSize: 20, margin: "16px 0 6px" }}>配送状況</h1>
-      <p style={{ fontSize: 11.5, color: "#8a8478", marginBottom: 24 }}>
+      <p style={{ fontSize: 11.5, color: "var(--color-beige-gray)", marginBottom: 24 }}>
         注文番号：{order.id}
       </p>
 
       {isPreShipping ? (
-        <div style={{ background: "#f7f4ee", borderRadius: 6, padding: 20, marginBottom: 24, textAlign: "center" }}>
+        <div style={{ background: "var(--color-beige-light)", borderRadius: 6, padding: 20, marginBottom: 24, textAlign: "center" }}>
           <p style={{ fontSize: 13, lineHeight: 1.8 }}>
             {order.status === "pending_payment" && "お支払いをお待ちしています"}
             {order.status === "payment_reported" && "ご入金の確認を行っています。今しばらくお待ちください。"}
@@ -85,14 +85,14 @@ export default function DeliveryStatusPage() {
                       width: 30,
                       height: 30,
                       borderRadius: "50%",
-                      background: active ? "#1b1b1b" : "#fff",
-                      border: `1.5px solid ${active ? "#1b1b1b" : "#e6e1d6"}`,
+                      background: active ? "var(--color-black)" : "var(--color-bg)",
+                      border: `1.5px solid ${active ? "var(--color-black)" : "var(--color-beige-border)"}`,
                     }}
                   />
-                  <div style={{ fontSize: 10.5, marginTop: 6, color: active ? "#1b1b1b" : "#8a8478" }}>{step.label}</div>
+                  <div style={{ fontSize: 10.5, marginTop: 6, color: active ? "var(--color-black)" : "var(--color-beige-gray)" }}>{step.label}</div>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div style={{ height: 1.5, background: i < currentStepIndex ? "#1b1b1b" : "#e6e1d6", flex: 1, marginTop: -18 }} />
+                  <div style={{ height: 1.5, background: i < currentStepIndex ? "var(--color-black)" : "var(--color-beige-border)", flex: 1, marginTop: -18 }} />
                 )}
               </div>
             );
@@ -100,8 +100,8 @@ export default function DeliveryStatusPage() {
         </div>
       )}
 
-      <div style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16, marginBottom: 16 }}>
-        <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 10 }}>ご注文内容</p>
+      <div style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16, marginBottom: 16 }}>
+        <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 10 }}>ご注文内容</p>
         {order.order_items?.map((item, i) => (
           <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "6px 0", borderBottom: "1px solid #f0ede5" }}>
             <span>
@@ -117,7 +117,7 @@ export default function DeliveryStatusPage() {
         </div>
       </div>
 
-      <p style={{ fontSize: 11, color: "#8a8478", textAlign: "center" }}>
+      <p style={{ fontSize: 11, color: "var(--color-beige-gray)", textAlign: "center" }}>
         {new Date(order.created_at).toLocaleString("ja-JP")} にご注文
       </p>
     </main>
