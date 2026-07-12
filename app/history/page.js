@@ -57,21 +57,21 @@ export default function HistoryPage() {
   if (loading) {
     return (
       <main style={{ minHeight: "100vh", padding: 32 }}>
-        <p style={{ fontSize: 13, color: "#8a8478" }}>読み込み中...</p>
+        <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>
       </main>
     );
   }
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 480, margin: "0 auto" }}>
-      <Link href="/" style={{ fontSize: 12, color: "#8a8478", textDecoration: "none" }}>
+      <Link href="/" style={{ fontSize: 12, color: "var(--color-beige-gray)", textDecoration: "none" }}>
         ← ホームに戻る
       </Link>
 
       <h1 style={{ fontFamily: "serif", fontSize: 22, margin: "16px 0 20px" }}>購入履歴</h1>
 
       {orders.length === 0 && (
-        <p style={{ fontSize: 13, color: "#8a8478" }}>まだ購入履歴がありません</p>
+        <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>まだ購入履歴がありません</p>
       )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -79,17 +79,17 @@ export default function HistoryPage() {
           <Link
             key={o.id}
             href={`/delivery/${o.id}`}
-            style={{ display: "block", border: "1px solid #e6e1d6", borderRadius: 6, padding: 16, textDecoration: "none", color: "#1b1b1b" }}
+            style={{ display: "block", border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16, textDecoration: "none", color: "var(--color-text)" }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-              <span style={{ fontSize: 12, color: "#8a8478" }}>{new Date(o.created_at).toLocaleDateString("ja-JP")}</span>
+              <span style={{ fontSize: 12, color: "var(--color-beige-gray)" }}>{new Date(o.created_at).toLocaleDateString("ja-JP")}</span>
               <span
                 style={{
                   fontSize: 11,
                   padding: "3px 10px",
                   borderRadius: 999,
-                  background: o.status === "delivered" ? "#eee" : "#1b1b1b",
-                  color: o.status === "delivered" ? "#1b1b1b" : "#fff",
+                  background: o.status === "delivered" ? "#eee" : "var(--color-black)",
+                  color: o.status === "delivered" ? "var(--color-text)" : "var(--color-bg)",
                 }}
               >
                 {STATUS_LABEL[o.status] || o.status}
@@ -105,7 +105,7 @@ export default function HistoryPage() {
             </div>
 
             <div style={{ fontSize: 14, fontWeight: 600 }}>合計 {fmt(o.total_amount)}</div>
-            <div style={{ fontSize: 11, color: "#8a8478", marginTop: 6 }}>配送状況を見る →</div>
+            <div style={{ fontSize: 11, color: "var(--color-beige-gray)", marginTop: 6 }}>配送状況を見る →</div>
           </Link>
         ))}
       </div>
