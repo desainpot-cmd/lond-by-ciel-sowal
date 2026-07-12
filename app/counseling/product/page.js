@@ -208,14 +208,14 @@ export default function CounselingPage() {
   const wrap = { minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 24px" };
   const box = { width: "100%", maxWidth: 380 };
   const h1 = { fontFamily: "serif", fontSize: 20, marginBottom: 20 };
-  const label = { fontSize: 12, color: "#8a8478", marginBottom: 8, display: "block" };
+  const label = { fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 8, display: "block" };
   const tagRow = { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 };
-  const inputStyle = { width: "100%", padding: 12, border: "1px solid #ccc", borderRadius: 4, fontSize: 14, marginBottom: 20, boxSizing: "border-box" };
+  const inputStyle = { width: "100%", padding: 12, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 14, marginBottom: 20, boxSizing: "border-box" };
   const btnRow = { display: "flex", gap: 10, marginTop: 10 };
-  const primaryBtn = { flex: 1, padding: 14, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" };
-  const ghostBtn = { flex: 1, padding: 14, background: "transparent", color: "#1b1b1b", border: "1.5px solid #1b1b1b", borderRadius: 4, fontSize: 14, cursor: "pointer" };
+  const primaryBtn = { flex: 1, padding: 14, background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" };
+  const ghostBtn = { flex: 1, padding: 14, background: "transparent", color: "var(--color-black)", border: "1.5px solid var(--color-black)", borderRadius: 4, fontSize: 14, cursor: "pointer" };
   const progress = { height: 4, background: "#eee", borderRadius: 2, marginBottom: 24, overflow: "hidden" };
-  const progressFill = { height: "100%", background: "#1b1b1b", width: `${(step / TOTAL_STEPS) * 100}%` };
+  const progressFill = { height: "100%", background: "var(--color-black)", width: `${(step / TOTAL_STEPS) * 100}%` };
 
   const Tag = ({ selected, onClick, children }) => (
     <button
@@ -224,9 +224,9 @@ export default function CounselingPage() {
       style={{
         padding: "9px 14px",
         borderRadius: 999,
-        border: `1px solid ${selected ? "#1b1b1b" : "#ccc"}`,
-        background: selected ? "#1b1b1b" : "transparent",
-        color: selected ? "#fff" : "#1b1b1b",
+        border: `1px solid ${selected ? "var(--color-black)" : "var(--color-beige-border)"}`,
+        background: selected ? "var(--color-black)" : "transparent",
+        color: selected ? "var(--color-bg)" : "var(--color-black)",
         fontSize: 13,
         cursor: "pointer",
       }}
@@ -240,7 +240,7 @@ export default function CounselingPage() {
       <main style={wrap}>
         <div style={{ ...box, textAlign: "center", marginTop: 80 }}>
           <h1 style={h1}>送信しました</h1>
-          <p style={{ fontSize: 13, color: "#8a8478", lineHeight: 1.8 }}>
+          <p style={{ fontSize: 13, color: "var(--color-beige-gray)", lineHeight: 1.8 }}>
             スタイリストが内容を確認し、あなたに合う商品を提案します。
           </p>
         </div>
@@ -254,12 +254,12 @@ export default function CounselingPage() {
         <div style={progress}>
           <div style={progressFill} />
         </div>
-        <p style={{ fontSize: 11, color: "#8a8478", marginBottom: 8 }}>STEP {step} / {TOTAL_STEPS}</p>
+        <p style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 8 }}>STEP {step} / {TOTAL_STEPS}</p>
 
         {step === 1 && (
           <>
             <h1 style={h1}>今日はどのような商品をお探しですか？</h1>
-            <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 16 }}>複数選択できます</p>
+            <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 16 }}>複数選択できます</p>
             <div style={tagRow}>
               {INTEREST_OPTIONS.map((o) => (
                 <Tag key={o.id} selected={a.interests.includes(o.id)} onClick={() => set("interests", toggle(a.interests, o.id))}>
@@ -397,7 +397,7 @@ export default function CounselingPage() {
         {step === 6 && (
           <>
             <h1 style={h1}>写真アップロード（任意）</h1>
-            <p style={{ fontSize: 12, color: "#8a8478", lineHeight: 1.8, marginBottom: 16 }}>
+            <p style={{ fontSize: 12, color: "var(--color-beige-gray)", lineHeight: 1.8, marginBottom: 16 }}>
               横・後ろ・気になる箇所の写真は任意です。顔が写らない角度でお願いします。
             </p>
 
@@ -413,7 +413,7 @@ export default function CounselingPage() {
                     <button
                       type="button"
                       onClick={() => setPhotos((p) => ({ ...p, [key]: null }))}
-                      style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+                      style={{ fontSize: 12, color: "var(--color-beige-gray)", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
                     >
                       削除してやり直す
                     </button>
@@ -427,7 +427,7 @@ export default function CounselingPage() {
                     style={{ fontSize: 12 }}
                   />
                 )}
-                {uploadingKey === key && <p style={{ fontSize: 11, color: "#8a8478" }}>アップロード中...</p>}
+                {uploadingKey === key && <p style={{ fontSize: 11, color: "var(--color-beige-gray)" }}>アップロード中...</p>}
               </div>
             ))}
 
@@ -439,7 +439,7 @@ export default function CounselingPage() {
                   <button
                     type="button"
                     onClick={() => setPhotos((p) => ({ ...p, concern: null }))}
-                    style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+                    style={{ fontSize: 12, color: "var(--color-beige-gray)", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
                   >
                     削除してやり直す
                   </button>
@@ -453,11 +453,11 @@ export default function CounselingPage() {
                   style={{ fontSize: 12, marginBottom: 10 }}
                 />
               )}
-              {uploadingKey === "concern" && <p style={{ fontSize: 11, color: "#8a8478" }}>アップロード中...</p>}
+              {uploadingKey === "concern" && <p style={{ fontSize: 11, color: "var(--color-beige-gray)" }}>アップロード中...</p>}
 
               {photos.concern && (
                 <>
-                  <p style={{ fontSize: 11.5, color: "#8a8478", margin: "10px 0 8px" }}>この写真はどの悩みですか？</p>
+                  <p style={{ fontSize: 11.5, color: "var(--color-beige-gray)", margin: "10px 0 8px" }}>この写真はどの悩みですか？</p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                     {CONCERN_TAGS.map((t) => (
                       <Tag key={t} selected={concernTag === t} onClick={() => setConcernTag(t)}>
