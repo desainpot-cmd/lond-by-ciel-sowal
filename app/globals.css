@@ -1,3 +1,13 @@
+:root {
+  --color-bg: #ffffff;
+  --color-text: #1b1b1b;
+  --color-black: #1b1b1b;
+  --color-beige-gray: #8a8478;
+  --color-beige-light: #f7f4ee;
+  --color-beige-border: #e6e1d6;
+  --color-accent: #b8926b;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -5,8 +15,8 @@
 body {
   margin: 0;
   font-family: -apple-system, "Inter", "Hiragino Sans", sans-serif;
-  background: #ffffff;
-  color: #1b1b1b;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 a {
