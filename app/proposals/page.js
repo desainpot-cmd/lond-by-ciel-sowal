@@ -91,7 +91,7 @@ export default function ProposalsPage() {
   if (loading) {
     return (
       <main style={{ minHeight: "100vh", padding: 32 }}>
-        <p style={{ fontSize: 13, color: "#8a8478" }}>読み込み中...</p>
+        <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>
       </main>
     );
   }
@@ -100,7 +100,7 @@ export default function ProposalsPage() {
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 480, margin: "0 auto" }}>
-      <Link href="/" style={{ fontSize: 12, color: "#8a8478", textDecoration: "none" }}>
+      <Link href="/" style={{ fontSize: 12, color: "var(--color-beige-gray)", textDecoration: "none" }}>
         ← ホームに戻る
       </Link>
 
@@ -109,7 +109,7 @@ export default function ProposalsPage() {
       {errorMsg && <p style={{ fontSize: 13, color: "#b00" }}>エラー: {errorMsg}</p>}
 
       {!errorMsg && !hasAnyProposal && (
-        <div style={{ background: "#f7f4ee", borderRadius: 6, padding: 20, fontSize: 13, color: "#8a8478", lineHeight: 1.8 }}>
+        <div style={{ background: "var(--color-beige-light)", borderRadius: 6, padding: 20, fontSize: 13, color: "var(--color-beige-gray)", lineHeight: 1.8 }}>
           まだ提案がありません。カウンセリングを送信すると、スタイリストが確認後にここへ提案します。
           <div style={{ marginTop: 14 }}>
             <Link
@@ -117,8 +117,8 @@ export default function ProposalsPage() {
               style={{
                 display: "inline-block",
                 padding: "10px 18px",
-                background: "#1b1b1b",
-                color: "#fff",
+                background: "var(--color-black)",
+                color: "var(--color-bg)",
                 borderRadius: 4,
                 textDecoration: "none",
                 fontSize: 13,
@@ -135,12 +135,12 @@ export default function ProposalsPage() {
           <h2 style={{ fontFamily: "serif", fontSize: 16, marginBottom: 12 }}>髪型メニューのご提案</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {menuProposals.map((p) => (
-              <div key={p.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16 }}>
-                <div style={{ fontSize: 11, color: "#b8926b", fontWeight: 600, marginBottom: 10 }}>
+              <div key={p.id} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16 }}>
+                <div style={{ fontSize: 11, color: "var(--color-accent)", fontWeight: 600, marginBottom: 10 }}>
                   {p.stylist_profiles?.display_name || "スタイリスト"} より
                 </div>
                 {p.comment && (
-                  <p style={{ fontSize: 12.5, color: "#8a8478", lineHeight: 1.7, marginBottom: 14 }}>{p.comment}</p>
+                  <p style={{ fontSize: 12.5, color: "var(--color-beige-gray)", lineHeight: 1.7, marginBottom: 14 }}>{p.comment}</p>
                 )}
                 <div style={{ marginBottom: 12 }}>
                   {p.menu_ids?.map((mid) => (
@@ -164,8 +164,8 @@ export default function ProposalsPage() {
                       display: "block",
                       textAlign: "center",
                       padding: 12,
-                      background: "#1b1b1b",
-                      color: "#fff",
+                      background: "var(--color-black)",
+                      color: "var(--color-bg)",
                       borderRadius: 4,
                       fontSize: 13,
                       textDecoration: "none",
@@ -174,7 +174,7 @@ export default function ProposalsPage() {
                     {bookingLink.booking_link_label || "オンラインブッキングへ進む"}
                   </a>
                 ) : (
-                  <p style={{ fontSize: 11, color: "#8a8478", textAlign: "center" }}>
+                  <p style={{ fontSize: 11, color: "var(--color-beige-gray)", textAlign: "center" }}>
                     予約リンクは準備中です。サロンまで直接お問い合わせください。
                   </p>
                 )}
@@ -191,26 +191,26 @@ export default function ProposalsPage() {
             {recommendations.map((r) => {
               const t = r.products?.product_translations?.[0];
               return (
-                <div key={r.id} style={{ border: "1px solid #e6e1d6", borderRadius: 6, padding: 16 }}>
-                  <div style={{ fontSize: 11, color: "#b8926b", fontWeight: 600, marginBottom: 10 }}>
+                <div key={r.id} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16 }}>
+                  <div style={{ fontSize: 11, color: "var(--color-accent)", fontWeight: 600, marginBottom: 10 }}>
                     {r.stylist_profiles?.display_name || "スタイリスト"} より
                   </div>
 
                   {r.comment && (
-                    <p style={{ fontSize: 12.5, color: "#8a8478", lineHeight: 1.7, marginBottom: 14 }}>{r.comment}</p>
+                    <p style={{ fontSize: 12.5, color: "var(--color-beige-gray)", lineHeight: 1.7, marginBottom: 14 }}>{r.comment}</p>
                   )}
 
                   <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
                     <div style={{ width: 56, height: 56, background: "#f0ede5", borderRadius: 6, flexShrink: 0 }} />
                     <div>
                       <div style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 3 }}>{t?.name || "(商品名なし)"}</div>
-                      <div style={{ fontSize: 11, color: "#8a8478", marginBottom: 3 }}>{r.products?.volume}</div>
+                      <div style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 3 }}>{r.products?.volume}</div>
                       <div style={{ fontSize: 13, fontWeight: 600 }}>{fmt(r.products?.price)}</div>
                     </div>
                   </div>
 
                   {r.usage_instruction && (
-                    <div style={{ fontSize: 12, color: "#1b1b1b", background: "#f7f4ee", borderRadius: 4, padding: 10, lineHeight: 1.7, marginBottom: 12 }}>
+                    <div style={{ fontSize: 12, color: "var(--color-text)", background: "var(--color-beige-light)", borderRadius: 4, padding: 10, lineHeight: 1.7, marginBottom: 12 }}>
                       <b>使用方法：</b>
                       {r.usage_instruction}
                     </div>
@@ -223,8 +223,8 @@ export default function ProposalsPage() {
                         display: "block",
                         textAlign: "center",
                         padding: 12,
-                        background: "#1b1b1b",
-                        color: "#fff",
+                        background: "var(--color-black)",
+                        color: "var(--color-bg)",
                         borderRadius: 4,
                         fontSize: 13,
                         textDecoration: "none",
