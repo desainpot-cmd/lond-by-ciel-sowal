@@ -121,15 +121,15 @@ export default function StylistProfilePage() {
     setSaving(false);
   };
 
-  const inputStyle = { width: "100%", padding: 12, border: "1px solid #ccc", borderRadius: 4, fontSize: 14, marginBottom: 16, boxSizing: "border-box" };
-  const label = { fontSize: 12, color: "#8a8478", marginBottom: 6, display: "block" };
+  const inputStyle = { width: "100%", padding: 12, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 14, marginBottom: 16, boxSizing: "border-box" };
+  const label = { fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 6, display: "block" };
 
   if (checking) return <main style={{ padding: 32 }}>読み込み中...</main>;
   if (denied)
     return (
       <main style={{ minHeight: "100vh", padding: 32, textAlign: "center" }}>
         <p style={{ fontSize: 14, marginTop: 80 }}>このページを見る権限がありません。</p>
-        <Link href="/" style={{ fontSize: 13, color: "#8a8478" }}>
+        <Link href="/" style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>
           ホームに戻る
         </Link>
       </main>
@@ -137,12 +137,12 @@ export default function StylistProfilePage() {
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 480, margin: "0 auto" }}>
-      <Link href="/stylist" style={{ fontSize: 12, color: "#8a8478", textDecoration: "none" }}>
+      <Link href="/stylist" style={{ fontSize: 12, color: "var(--color-beige-gray)", textDecoration: "none" }}>
         ← カウンセリング一覧に戻る
       </Link>
 
       <h1 style={{ fontFamily: "serif", fontSize: 22, margin: "16px 0 20px" }}>プロフィール編集</h1>
-      <p style={{ fontSize: 12, color: "#8a8478", marginBottom: 20, lineHeight: 1.8 }}>
+      <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 20, lineHeight: 1.8 }}>
         ここで編集した内容は、お客様向けの「スタイリスト紹介ページ」に反映されます。
       </p>
 
@@ -157,7 +157,7 @@ export default function StylistProfilePage() {
             <button
               type="button"
               onClick={() => set("photo_url", "")}
-              style={{ fontSize: 12, color: "#8a8478", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
+              style={{ fontSize: 12, color: "var(--color-beige-gray)", background: "none", border: "none", textDecoration: "underline", cursor: "pointer" }}
             >
               削除してやり直す
             </button>
@@ -171,7 +171,7 @@ export default function StylistProfilePage() {
             style={{ fontSize: 12, marginBottom: 16 }}
           />
         )}
-        {uploadingPhoto && <p style={{ fontSize: 11, color: "#8a8478", marginBottom: 16 }}>アップロード中...</p>}
+        {uploadingPhoto && <p style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 16 }}>アップロード中...</p>}
 
         <label style={label}>経験年数</label>
         <input
@@ -206,12 +206,12 @@ export default function StylistProfilePage() {
           placeholder="例：https://instagram.com/xxxxx"
         />
 
-        {saveMsg && <p style={{ fontSize: 13, color: saveMsg.startsWith("エラー") ? "#b00" : "#1b1b1b", marginBottom: 12 }}>{saveMsg}</p>}
+        {saveMsg && <p style={{ fontSize: 13, color: saveMsg.startsWith("エラー") ? "#b00" : "var(--color-text)", marginBottom: 12 }}>{saveMsg}</p>}
 
         <button
           type="submit"
           disabled={saving}
-          style={{ width: "100%", padding: 14, background: "#1b1b1b", color: "#fff", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
+          style={{ width: "100%", padding: 14, background: "var(--color-black)", color: "var(--color-bg)", border: "none", borderRadius: 4, fontSize: 14, cursor: "pointer" }}
         >
           {saving ? "保存中..." : "保存する"}
         </button>
