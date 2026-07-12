@@ -54,7 +54,7 @@ export default function StylistListPage() {
     return (
       <main style={{ minHeight: "100vh", padding: 32, textAlign: "center" }}>
         <p style={{ fontSize: 14, marginTop: 80 }}>このページを見る権限がありません。</p>
-        <Link href="/" style={{ fontSize: 13, color: "#8a8478" }}>
+        <Link href="/" style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>
           ホームに戻る
         </Link>
       </main>
@@ -65,10 +65,10 @@ export default function StylistListPage() {
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 640, margin: "0 auto" }}>
       <h1 style={{ fontFamily: "serif", fontSize: 22, marginBottom: 20 }}>カウンセリング一覧</h1>
 
-      {loading && <p style={{ fontSize: 13, color: "#8a8478" }}>読み込み中...</p>}
+      {loading && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>}
       {errorMsg && <p style={{ fontSize: 13, color: "#b00" }}>エラー: {errorMsg}</p>}
       {!loading && records.length === 0 && (
-        <p style={{ fontSize: 13, color: "#8a8478" }}>まだカウンセリングがありません</p>
+        <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>まだカウンセリングがありません</p>
       )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -80,11 +80,11 @@ export default function StylistListPage() {
               href={isHairstyle ? `/stylist/hairstyle/${r.id}` : `/stylist/counseling/${r.id}`}
               style={{
                 display: "block",
-                border: "1px solid #e6e1d6",
+                border: "1px solid var(--color-beige-border)",
                 borderRadius: 6,
                 padding: 16,
                 textDecoration: "none",
-                color: "#1b1b1b",
+                color: "var(--color-text)",
               }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, gap: 8 }}>
@@ -97,8 +97,8 @@ export default function StylistListPage() {
                       fontSize: 10.5,
                       padding: "3px 9px",
                       borderRadius: 999,
-                      background: isHairstyle ? "#b8926b" : "#e6e1d6",
-                      color: isHairstyle ? "#fff" : "#1b1b1b",
+                      background: isHairstyle ? "var(--color-accent)" : "var(--color-beige-border)",
+                      color: isHairstyle ? "var(--color-bg)" : "var(--color-text)",
                     }}
                   >
                     {isHairstyle ? "髪型" : "商品"}
@@ -108,24 +108,24 @@ export default function StylistListPage() {
                       fontSize: 11,
                       padding: "3px 10px",
                       borderRadius: 999,
-                      background: r.status === "pending" ? "#1b1b1b" : "#eee",
-                      color: r.status === "pending" ? "#fff" : "#1b1b1b",
+                      background: r.status === "pending" ? "var(--color-black)" : "#eee",
+                      color: r.status === "pending" ? "var(--color-bg)" : "var(--color-text)",
                     }}
                   >
                     {STATUS_LABEL[r.status] || r.status}
                   </span>
                 </div>
               </div>
-              <div style={{ fontSize: 12, color: "#8a8478" }}>
+              <div style={{ fontSize: 12, color: "var(--color-beige-gray)" }}>
                 {new Date(r.created_at).toLocaleString("ja-JP")}
               </div>
               {isHairstyle && r.desired_result && (
-                <div style={{ fontSize: 12, color: "#8a8478", marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: "var(--color-beige-gray)", marginTop: 4 }}>
                   なりたいイメージ：{r.desired_result}
                 </div>
               )}
               {!isHairstyle && r.concerns?.length > 0 && (
-                <div style={{ fontSize: 12, color: "#8a8478", marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: "var(--color-beige-gray)", marginTop: 4 }}>
                   悩み：{r.concerns.join("、")}
                 </div>
               )}
