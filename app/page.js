@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../lib/supabaseClient";
 
 export default function Home() {
+  const router = useRouter();
   const [banners, setBanners] = useState([]);
-  const [userId, setUserId] = useState(null);
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     const loadBanners = async () => {
@@ -24,19 +26,26 @@ export default function Home() {
       });
       setBanners(visible);
     };
-    loadBanners();
 
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
-      setUserId(data?.user?.id || null);
+      if (data?.user) {
+        router.push("/counseling");
+        return;
+      }
+      setChecking(false);
+      loadBanners();
     };
     checkUser();
-  }, []);
+  }, [router]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setUserId(null);
-  };
+  if (checking) {
+    return (
+      <main style={{ minHeight: "100vh", padding: 32 }}>
+        <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>
+      </main>
+    );
+  }
 
   return (
     <main
@@ -74,49 +83,19 @@ export default function Home() {
         </p>
       </div>
 
-      {userId ? (
-        <button
-          onClick={handleLogout}
-          style={{
-            background: "var(--color-black)",
-            color: "var(--color-bg)",
-            padding: "14px 28px",
-            borderRadius: 4,
-            border: "none",
-            fontSize: 14,
-            cursor: "pointer",
-          }}
-        >
-          ログアウト
-        </button>
-      ) : (
-        <Link
-          href="/login"
-          style={{
-            background: "var(--color-black)",
-            color: "var(--color-bg)",
-            padding: "14px 28px",
-            borderRadius: 4,
-            textDecoration: "none",
-            fontSize: 14,
-          }}
-        >
-          ログイン / 会員登録
-        </Link>
-      )}
-
-      {userId && (
-        <Link
-          href="/proposals"
-          style={{
-            color: "var(--color-text)",
-            fontSize: 13,
-            textDecoration: "underline",
-          }}
-        >
-          あなたへの提案を見る
-        </Link>
-      )}
+      <Link
+        href="/login"
+        style={{
+          background: "var(--color-black)",
+          color: "var(--color-bg)",
+          padding: "14px 28px",
+          borderRadius: 4,
+          textDecoration: "none",
+          fontSize: 14,
+        }}
+      >
+        ログイン / 会員登録
+      </Link>
 
       <Link
         href="/products"
@@ -139,19 +118,6 @@ export default function Home() {
       >
         スタイリスト紹介を見る
       </Link>
-
-      {userId && (
-        <Link
-          href="/history"
-          style={{
-            color: "var(--color-text)",
-            fontSize: 13,
-            textDecoration: "underline",
-          }}
-        >
-          購入履歴を見る
-        </Link>
-      )}
     </main>
   );
 }

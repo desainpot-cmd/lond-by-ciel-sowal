@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function CounselingChoicePage() {
+  const router = useRouter();
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
@@ -14,6 +16,11 @@ export default function CounselingChoicePage() {
     };
     checkUser();
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
 
   return (
     <main
@@ -28,6 +35,14 @@ export default function CounselingChoicePage() {
       }}
     >
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 16px" }}>
+        {userId && (
+          <button
+            onClick={handleLogout}
+            style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+          >
+            ログアウト
+          </button>
+        )}
         {userId && (
           <Link href="/proposals" style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline" }}>
             あなたへの提案を見る
