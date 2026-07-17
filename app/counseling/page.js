@@ -36,14 +36,6 @@ export default function CounselingChoicePage() {
     >
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 16px" }}>
         {userId && (
-          <button
-            onClick={handleLogout}
-            style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline", background: "none", border: "none", cursor: "pointer", padding: 0 }}
-          >
-            ログアウト
-          </button>
-        )}
-        {userId && (
           <Link href="/proposals" style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline" }}>
             あなたへの提案を見る
           </Link>
@@ -103,6 +95,27 @@ export default function CounselingChoicePage() {
           </div>
         </Link>
       </div>
+
+      {userId && (
+        <button
+          onClick={handleLogout}
+          style={{
+            position: "fixed",
+            right: 20,
+            bottom: 20,
+            background: "var(--color-black)",
+            color: "var(--color-bg)",
+            padding: "10px 18px",
+            borderRadius: 999,
+            border: "none",
+            fontSize: 12,
+            cursor: "pointer",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+          }}
+        >
+          ログアウト
+        </button>
+      )}
     </main>
   );
 }
