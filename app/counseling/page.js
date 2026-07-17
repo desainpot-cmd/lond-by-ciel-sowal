@@ -1,33 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function CounselingChoicePage() {
-  const router = useRouter();
-  const [checking, setChecking] = useState(true);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const check = async () => {
+    const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
-      if (!data?.user) {
-        router.push("/login");
-        return;
-      }
-      setChecking(false);
+      setUserId(data?.user?.id || null);
     };
-    check();
-  }, [router]);
-
-  if (checking) {
-    return (
-      <main style={{ minHeight: "100vh", padding: 32 }}>
-        <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>
-      </main>
-    );
-  }
+    checkUser();
+  }, []);
 
   return (
     <main
@@ -41,6 +27,25 @@ export default function CounselingChoicePage() {
         gap: 28,
       }}
     >
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 16px" }}>
+        {userId && (
+          <Link href="/proposals" style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline" }}>
+            あなたへの提案を見る
+          </Link>
+        )}
+        {userId && (
+          <Link href="/history" style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline" }}>
+            購入履歴を見る
+          </Link>
+        )}
+        <Link href="/products" style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline" }}>
+          商品一覧を見る
+        </Link>
+        <Link href="/stylists" style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline" }}>
+          スタイリスト紹介を見る
+        </Link>
+      </div>
+
       <div style={{ textAlign: "center" }}>
         <h1 style={{ fontFamily: "serif", fontSize: 22, marginBottom: 8 }}>
           今日は何をしたいですか？
