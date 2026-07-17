@@ -33,6 +33,11 @@ export default function Home() {
     checkUser();
   }, []);
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUserId(null);
+  };
+
   return (
     <main
       style={{
@@ -69,19 +74,36 @@ export default function Home() {
         </p>
       </div>
 
-      <Link
-        href="/login"
-        style={{
-          background: "var(--color-black)",
-          color: "var(--color-bg)",
-          padding: "14px 28px",
-          borderRadius: 4,
-          textDecoration: "none",
-          fontSize: 14,
-        }}
-      >
-        ログイン / 会員登録
-      </Link>
+      {userId ? (
+        <button
+          onClick={handleLogout}
+          style={{
+            background: "var(--color-black)",
+            color: "var(--color-bg)",
+            padding: "14px 28px",
+            borderRadius: 4,
+            border: "none",
+            fontSize: 14,
+            cursor: "pointer",
+          }}
+        >
+          ログアウト
+        </button>
+      ) : (
+        <Link
+          href="/login"
+          style={{
+            background: "var(--color-black)",
+            color: "var(--color-bg)",
+            padding: "14px 28px",
+            borderRadius: 4,
+            textDecoration: "none",
+            fontSize: 14,
+          }}
+        >
+          ログイン / 会員登録
+        </Link>
+      )}
 
       {userId && (
         <Link
