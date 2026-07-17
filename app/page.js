@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../lib/supabaseClient";
 
+const HERO_IMAGE_URL =
+  "https://momnqutyqwzynfooxabv.supabase.co/storage/v1/object/public/salon-assets/hero/54B4C766-DE62-4D49-AB00-62D4AF332640.JPEG";
+
 export default function Home() {
   const router = useRouter();
   const [banners, setBanners] = useState([]);
@@ -54,70 +57,124 @@ export default function Home() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
-        gap: 24,
-        padding: 24,
-        textAlign: "center",
       }}
     >
-      {banners.length > 0 && (
-        <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 10 }}>
-          {banners.map((b) =>
-            b.link_url ? (
-              <Link key={b.id} href={b.link_url}>
-                <img src={b.image_url} alt="" style={{ width: "100%", borderRadius: 6, display: "block" }} />
-              </Link>
-            ) : (
-              <img key={b.id} src={b.image_url} alt="" style={{ width: "100%", borderRadius: 6, display: "block" }} />
-            )
-          )}
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          aspectRatio: "3 / 2",
+          overflow: "hidden",
+        }}
+      >
+        <img
+          src={HERO_IMAGE_URL}
+          alt=""
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            display: "block",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            right: "6%",
+            transform: "translateY(-50%)",
+            width: "38%",
+            textAlign: "right",
+          }}
+        >
+          <h1
+            style={{
+              fontFamily: "serif",
+              fontSize: "clamp(22px, 7vw, 56px)",
+              lineHeight: 1.08,
+              margin: 0,
+              color: "var(--color-black)",
+            }}
+          >
+            Lond by Ciel Sowal
+          </h1>
+          <p
+            style={{
+              color: "var(--color-beige-gray)",
+              fontSize: "clamp(9px, 1.6vw, 13px)",
+              marginTop: 10,
+              letterSpacing: 0.5,
+            }}
+          >
+            ONLINE HAIR COUNSELING（開発中）
+          </p>
         </div>
-      )}
-
-      <div>
-        <h1 style={{ fontFamily: "serif", fontSize: 28, marginBottom: 4 }}>
-          Lond by Ciel Sowal
-        </h1>
-        <p style={{ color: "var(--color-beige-gray)", fontSize: 13 }}>
-          ONLINE HAIR COUNSELING（開発中）
-        </p>
       </div>
 
-      <Link
-        href="/login"
+      <div
         style={{
-          background: "var(--color-black)",
-          color: "var(--color-bg)",
-          padding: "14px 28px",
-          borderRadius: 4,
-          textDecoration: "none",
-          fontSize: 14,
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 24,
+          padding: 24,
+          textAlign: "center",
         }}
       >
-        ログイン / 会員登録
-      </Link>
+        {banners.length > 0 && (
+          <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 10 }}>
+            {banners.map((b) =>
+              b.link_url ? (
+                <Link key={b.id} href={b.link_url}>
+                  <img src={b.image_url} alt="" style={{ width: "100%", borderRadius: 6, display: "block" }} />
+                </Link>
+              ) : (
+                <img key={b.id} src={b.image_url} alt="" style={{ width: "100%", borderRadius: 6, display: "block" }} />
+              )
+            )}
+          </div>
+        )}
 
-      <Link
-        href="/products"
-        style={{
-          color: "var(--color-text)",
-          fontSize: 13,
-          textDecoration: "underline",
-        }}
-      >
-        商品一覧を見る
-      </Link>
+        <Link
+          href="/login"
+          style={{
+            background: "var(--color-black)",
+            color: "var(--color-bg)",
+            padding: "14px 28px",
+            borderRadius: 4,
+            textDecoration: "none",
+            fontSize: 14,
+          }}
+        >
+          ログイン / 会員登録
+        </Link>
 
-      <Link
-        href="/stylists"
-        style={{
-          color: "var(--color-text)",
-          fontSize: 13,
-          textDecoration: "underline",
-        }}
-      >
-        スタイリスト紹介を見る
-      </Link>
+        <Link
+          href="/products"
+          style={{
+            color: "var(--color-text)",
+            fontSize: 13,
+            textDecoration: "underline",
+          }}
+        >
+          商品一覧を見る
+        </Link>
+
+        <Link
+          href="/stylists"
+          style={{
+            color: "var(--color-text)",
+            fontSize: 13,
+            textDecoration: "underline",
+          }}
+        >
+          スタイリスト紹介を見る
+        </Link>
+      </div>
     </main>
   );
 }
