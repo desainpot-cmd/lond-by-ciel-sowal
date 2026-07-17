@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "../../../lib/supabaseClient";
 import { uploadCounselingPhoto } from "../../../lib/uploadPhoto";
 
@@ -70,8 +69,15 @@ const EMPTY = {
 const TOTAL_STEPS = 6;
 
 export default function HairstyleCounselingPage() {
-  const router = useRouter();
   const [userId, setUserId] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // 電話番号ルート用
+  const [phoneCustomerId, setPhoneCustomerId] = useState(null);
+  const [phoneForm, setPhoneForm] = useState({ name: "", phone: "", pin: "" });
+  const [phoneVerifying, setPhoneVerifying] = useState(false);
+  const [phoneError, setPhoneError] = useState("");
+
   const [step, setStep] = useState(1);
   const [a, setA] = useState(EMPTY);
   const [stylists, setStylists] = useState([]);
@@ -84,11 +90,10 @@ export default function HairstyleCounselingPage() {
   useEffect(() => {
     const init = async () => {
       const { data } = await supabase.auth.getUser();
-      if (!data?.user) {
-        router.push("/login");
-        return;
+      if (data?.user) {
+        setUserId(data.user.id);
       }
-      setUserId(data.user.id);
+      setAuthChecked(true);
 
       const { data: stylistData } = await supabase
         .from("stylist_profiles")
@@ -96,7 +101,7 @@ export default function HairstyleCounselingPage() {
       setStylists(stylistData || []);
     };
     init();
-  }, [router]);
+  }, []);
 
   const set = (k, v) => setA((prev) => ({ ...prev, [k]: v }));
   const toggle = (arr, v) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
@@ -104,12 +109,51 @@ export default function HairstyleCounselingPage() {
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   const back = () => setStep((s) => Math.max(s - 1, 1));
 
+  const handlePhoneVerify = async () => {
+    setPhoneError("");
+    if (!phoneForm.name.trim()) {
+      setPhoneError("お名前を入力してください");
+      return;
+    }
+    if (!phoneForm.phone.trim()) {
+      setPhoneError("電話番号を入力してください");
+      return;
+    }
+    if (!/^\d{4}$/.test(phoneForm.pin)) {
+      setPhoneError("PINは4桁の数字で入力してください");
+      return;
+    }
+
+    setPhoneVerifying(true);
+    const { data, error } = await supabase.rpc("verify_or_register_customer", {
+      p_name: phoneForm.name.trim(),
+      p_phone: phoneForm.phone.trim(),
+      p_pin: phoneForm.pin,
+    });
+
+    if (error) {
+      setPhoneError("エラー: " + error.message);
+      setPhoneVerifying(false);
+      return;
+    }
+
+    const result = data?.[0];
+    if (!result || result.status === "pin_mismatch") {
+      setPhoneError("PINが一致しません。もう一度確認してください。");
+      setPhoneVerifying(false);
+      return;
+    }
+
+    setPhoneCustomerId(result.customer_id);
+    setPhoneVerifying(false);
+  };
+
   const handlePhotoChange = async (key, file) => {
     if (!file) return;
     setUploadingKey(key);
     setErrorMsg("");
     try {
-      const url = await uploadCounselingPhoto(file, userId);
+      const url = await uploadCounselingPhoto(file, userId || phoneCustomerId);
       setPhotos((prev) => ({ ...prev, [key]: url }));
     } catch (err) {
       setErrorMsg("写真のアップロードに失敗しました: " + err.message);
@@ -121,37 +165,41 @@ export default function HairstyleCounselingPage() {
     setLoading(true);
     setErrorMsg("");
 
-    const { data: existingAppUser } = await supabase
-      .from("app_users")
-      .select("id")
-      .eq("id", userId)
-      .maybeSingle();
-
-    if (!existingAppUser) {
-      await supabase.from("app_users").insert({ id: userId, role: "customer" });
-    }
-
-    let { data: existingProfile } = await supabase
-      .from("customer_profiles")
-      .select("id")
-      .eq("user_id", userId)
-      .maybeSingle();
-
-    let customerId = existingProfile?.id;
+    let customerId = phoneCustomerId;
 
     if (!customerId) {
-      const { data: newProfile, error: profileError } = await supabase
-        .from("customer_profiles")
-        .insert({ user_id: userId })
-        .select()
-        .single();
+      const { data: existingAppUser } = await supabase
+        .from("app_users")
+        .select("id")
+        .eq("id", userId)
+        .maybeSingle();
 
-      if (profileError) {
-        setErrorMsg("エラー（プロフィール作成）: " + profileError.message);
-        setLoading(false);
-        return;
+      if (!existingAppUser) {
+        await supabase.from("app_users").insert({ id: userId, role: "customer" });
       }
-      customerId = newProfile.id;
+
+      let { data: existingProfile } = await supabase
+        .from("customer_profiles")
+        .select("id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      customerId = existingProfile?.id;
+
+      if (!customerId) {
+        const { data: newProfile, error: profileError } = await supabase
+          .from("customer_profiles")
+          .insert({ user_id: userId })
+          .select()
+          .single();
+
+        if (profileError) {
+          setErrorMsg("エラー（プロフィール作成）: " + profileError.message);
+          setLoading(false);
+          return;
+        }
+        customerId = newProfile.id;
+      }
     }
 
     const { data: newCounseling, error: counselingError } = await supabase
@@ -230,6 +278,66 @@ export default function HairstyleCounselingPage() {
       {children}
     </button>
   );
+
+  // 認証チェック中
+  if (!authChecked) {
+    return (
+      <main style={wrap}>
+        <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>
+      </main>
+    );
+  }
+
+  // 未ログイン & 電話番号未確認 → 入口フォームを表示
+  if (!userId && !phoneCustomerId) {
+    return (
+      <main style={wrap}>
+        <div style={box}>
+          <h1 style={h1}>お名前と電話番号を入力してください</h1>
+          <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 20, lineHeight: 1.8 }}>
+            会員登録は不要です。次回以降は同じ電話番号とPINで、ご相談内容の確認ができます。
+          </p>
+
+          <label style={label}>お名前</label>
+          <input
+            style={inputStyle}
+            value={phoneForm.name}
+            onChange={(e) => setPhoneForm((p) => ({ ...p, name: e.target.value }))}
+          />
+
+          <label style={label}>電話番号</label>
+          <input
+            style={inputStyle}
+            value={phoneForm.phone}
+            onChange={(e) => setPhoneForm((p) => ({ ...p, phone: e.target.value }))}
+            placeholder="例：0901234567"
+          />
+
+          <label style={label}>4桁のPIN（次回確認用に決めてください）</label>
+          <input
+            style={inputStyle}
+            value={phoneForm.pin}
+            onChange={(e) => setPhoneForm((p) => ({ ...p, pin: e.target.value.replace(/[^0-9]/g, "").slice(0, 4) }))}
+            placeholder="例：1234"
+            inputMode="numeric"
+          />
+
+          {phoneError && <p style={{ fontSize: 13, color: "#b00", marginBottom: 12 }}>{phoneError}</p>}
+
+          <button style={primaryBtn} onClick={handlePhoneVerify} disabled={phoneVerifying}>
+            {phoneVerifying ? "確認中..." : "この内容で進める"}
+          </button>
+
+          <p style={{ fontSize: 12, color: "var(--color-beige-gray)", textAlign: "center", marginTop: 20 }}>
+            すでにアカウントをお持ちの方は{" "}
+            <a href="/login" style={{ color: "var(--color-text)", textDecoration: "underline" }}>
+              ログイン
+            </a>
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   if (done) {
     return (
