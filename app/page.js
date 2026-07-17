@@ -86,95 +86,90 @@ export default function Home() {
             right: "6%",
             transform: "translateY(-50%)",
             width: "38%",
-            textAlign: "right",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            gap: "clamp(10px, 2.5vw, 20px)",
           }}
         >
-          <h1
+          <div style={{ textAlign: "right" }}>
+            <h1
+              style={{
+                fontFamily: "serif",
+                fontSize: "clamp(22px, 7vw, 56px)",
+                lineHeight: 1.08,
+                margin: 0,
+                color: "var(--color-black)",
+              }}
+            >
+              Lond by Ciel Sowal
+            </h1>
+            <p
+              style={{
+                color: "var(--color-beige-gray)",
+                fontSize: "clamp(9px, 1.6vw, 13px)",
+                marginTop: 10,
+                letterSpacing: 0.5,
+              }}
+            >
+              ONLINE HAIR COUNSELING（開発中）
+            </p>
+          </div>
+
+          <Link
+            href="/login"
             style={{
-              fontFamily: "serif",
-              fontSize: "clamp(22px, 7vw, 56px)",
-              lineHeight: 1.08,
-              margin: 0,
-              color: "var(--color-black)",
+              background: "var(--color-black)",
+              color: "var(--color-bg)",
+              padding: "clamp(7px, 1.8vw, 14px) clamp(12px, 3.2vw, 28px)",
+              borderRadius: 4,
+              textDecoration: "none",
+              fontSize: "clamp(10px, 1.8vw, 14px)",
+              whiteSpace: "nowrap",
             }}
           >
-            Lond by Ciel Sowal
-          </h1>
-          <p
+            ログイン / 会員登録
+          </Link>
+
+          <Link
+            href="/products"
             style={{
-              color: "var(--color-beige-gray)",
-              fontSize: "clamp(9px, 1.6vw, 13px)",
-              marginTop: 10,
-              letterSpacing: 0.5,
+              color: "var(--color-text)",
+              fontSize: "clamp(10px, 1.6vw, 13px)",
+              textDecoration: "underline",
+              whiteSpace: "nowrap",
             }}
           >
-            ONLINE HAIR COUNSELING（開発中）
-          </p>
+            商品一覧を見る
+          </Link>
+
+          <Link
+            href="/stylists"
+            style={{
+              color: "var(--color-text)",
+              fontSize: "clamp(10px, 1.6vw, 13px)",
+              textDecoration: "underline",
+              whiteSpace: "nowrap",
+            }}
+          >
+            スタイリスト紹介を見る
+          </Link>
         </div>
       </div>
 
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 24,
-          padding: 24,
-          textAlign: "center",
-        }}
-      >
-        {banners.length > 0 && (
-          <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 10 }}>
-            {banners.map((b) =>
-              b.link_url ? (
-                <Link key={b.id} href={b.link_url}>
-                  <img src={b.image_url} alt="" style={{ width: "100%", borderRadius: 6, display: "block" }} />
-                </Link>
-              ) : (
-                <img key={b.id} src={b.image_url} alt="" style={{ width: "100%", borderRadius: 6, display: "block" }} />
-              )
-            )}
-          </div>
-        )}
-
-        <Link
-          href="/login"
-          style={{
-            background: "var(--color-black)",
-            color: "var(--color-bg)",
-            padding: "14px 28px",
-            borderRadius: 4,
-            textDecoration: "none",
-            fontSize: 14,
-          }}
-        >
-          ログイン / 会員登録
-        </Link>
-
-        <Link
-          href="/products"
-          style={{
-            color: "var(--color-text)",
-            fontSize: 13,
-            textDecoration: "underline",
-          }}
-        >
-          商品一覧を見る
-        </Link>
-
-        <Link
-          href="/stylists"
-          style={{
-            color: "var(--color-text)",
-            fontSize: 13,
-            textDecoration: "underline",
-          }}
-        >
-          スタイリスト紹介を見る
-        </Link>
-      </div>
+      {banners.length > 0 && (
+        <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 10, padding: 24 }}>
+          {banners.map((b) =>
+            b.link_url ? (
+              <Link key={b.id} href={b.link_url}>
+                <img src={b.image_url} alt="" style={{ width: "100%", borderRadius: 6, display: "block" }} />
+              </Link>
+            ) : (
+              <img key={b.id} src={b.image_url} alt="" style={{ width: "100%", borderRadius: 6, display: "block" }} />
+            )
+          )}
+        </div>
+      )}
     </main>
   );
 }
