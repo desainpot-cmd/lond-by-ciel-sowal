@@ -6,6 +6,7 @@ import { supabase } from "../lib/supabaseClient";
 
 export default function Home() {
   const [banners, setBanners] = useState([]);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     const loadBanners = async () => {
@@ -24,6 +25,12 @@ export default function Home() {
       setBanners(visible);
     };
     loadBanners();
+
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUserId(data?.user?.id || null);
+    };
+    checkUser();
   }, []);
 
   return (
@@ -76,16 +83,18 @@ export default function Home() {
         ログイン / 会員登録
       </Link>
 
-      <Link
-        href="/proposals"
-        style={{
-          color: "var(--color-text)",
-          fontSize: 13,
-          textDecoration: "underline",
-        }}
-      >
-        あなたへの提案を見る
-      </Link>
+      {userId && (
+        <Link
+          href="/proposals"
+          style={{
+            color: "var(--color-text)",
+            fontSize: 13,
+            textDecoration: "underline",
+          }}
+        >
+          あなたへの提案を見る
+        </Link>
+      )}
 
       <Link
         href="/products"
@@ -109,16 +118,18 @@ export default function Home() {
         スタイリスト紹介を見る
       </Link>
 
-      <Link
-        href="/history"
-        style={{
-          color: "var(--color-text)",
-          fontSize: 13,
-          textDecoration: "underline",
-        }}
-      >
-        購入履歴を見る
-      </Link>
+      {userId && (
+        <Link
+          href="/history"
+          style={{
+            color: "var(--color-text)",
+            fontSize: 13,
+            textDecoration: "underline",
+          }}
+        >
+          購入履歴を見る
+        </Link>
+      )}
     </main>
   );
 }
