@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../lib/supabaseClient";
 
+const PRODUCT_ILLUSTRATION_URL =
+  "https://momnqutyqwzynfooxabv.supabase.co/storage/v1/object/public/salon-assets/cards/product-search-illustration-cropped.png";
+const HAIRSTYLE_ILLUSTRATION_URL =
+  "https://momnqutyqwzynfooxabv.supabase.co/storage/v1/object/public/salon-assets/cards/hair-consultation-illustration-cropped.png";
+
 export default function CounselingChoicePage() {
   const router = useRouter();
   const [userId, setUserId] = useState(null);
@@ -60,38 +65,79 @@ export default function CounselingChoicePage() {
         <p style={{ fontSize: 12.5, color: "var(--color-beige-gray)" }}>あなたに合った内容をご案内します</p>
       </div>
 
-      <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ width: "100%", maxWidth: 720, display: "flex", flexDirection: "column", gap: 20 }}>
         <Link
           href="/counseling/product"
           style={{
-            display: "block",
-            padding: 22,
-            border: "1px solid var(--color-beige-border)",
-            borderRadius: 8,
+            display: "flex",
+            alignItems: "stretch",
+            minHeight: 160,
+            background: "var(--color-beige-light)",
+            borderRadius: 12,
             textDecoration: "none",
             color: "var(--color-text)",
+            overflow: "hidden",
           }}
         >
-          <div style={{ fontFamily: "serif", fontSize: 17, marginBottom: 6 }}>商品を探す</div>
-          <div style={{ fontSize: 12, color: "var(--color-beige-gray)", lineHeight: 1.7 }}>
-            髪質に合ったシャンプー・トリートメントなどをご提案します
+          <div
+            style={{
+              flex: "1 1 50%",
+              padding: "clamp(20px, 4vw, 40px)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <div style={{ fontFamily: "serif", fontSize: "clamp(19px, 3vw, 26px)", marginBottom: 10 }}>商品を探す</div>
+            <div style={{ fontSize: 13, color: "var(--color-beige-gray)", lineHeight: 1.8 }}>
+              髪質に合ったシャンプー・トリートメントなどをご提案します
+            </div>
+            <div style={{ marginTop: 20, fontSize: 18, color: "var(--color-black)" }}>›</div>
+          </div>
+          <div style={{ flex: "1 1 50%", position: "relative", minWidth: 0 }}>
+            <img
+              src={PRODUCT_ILLUSTRATION_URL}
+              alt=""
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            />
           </div>
         </Link>
 
         <Link
           href="/counseling/hairstyle"
           style={{
-            display: "block",
-            padding: 22,
+            display: "flex",
+            alignItems: "stretch",
+            minHeight: 160,
+            background: "var(--color-bg)",
             border: "1px solid var(--color-beige-border)",
-            borderRadius: 8,
+            borderRadius: 12,
             textDecoration: "none",
             color: "var(--color-text)",
+            overflow: "hidden",
           }}
         >
-          <div style={{ fontFamily: "serif", fontSize: 17, marginBottom: 6 }}>髪型の相談をする</div>
-          <div style={{ fontSize: 12, color: "var(--color-beige-gray)", lineHeight: 1.7 }}>
-            なりたい髪型を伝えて、スタイリストからメニュー・料金の提案を受けられます
+          <div
+            style={{
+              flex: "1 1 50%",
+              padding: "clamp(20px, 4vw, 40px)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <div style={{ fontFamily: "serif", fontSize: "clamp(19px, 3vw, 26px)", marginBottom: 10 }}>髪型の相談をする</div>
+            <div style={{ fontSize: 13, color: "var(--color-beige-gray)", lineHeight: 1.8 }}>
+              なりたい髪型を伝えて、スタイリストからメニュー・料金の提案を受けられます
+            </div>
+            <div style={{ marginTop: 20, fontSize: 18, color: "var(--color-black)" }}>›</div>
+          </div>
+          <div style={{ flex: "1 1 50%", position: "relative", minWidth: 0 }}>
+            <img
+              src={HAIRSTYLE_ILLUSTRATION_URL}
+              alt=""
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            />
           </div>
         </Link>
       </div>
