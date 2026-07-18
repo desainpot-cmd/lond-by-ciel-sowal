@@ -515,12 +515,12 @@ export default function CounselingPage() {
           <>
             <h1 style={h1}>写真アップロード（任意）</h1>
             <p style={{ fontSize: 12, color: "var(--color-beige-gray)", lineHeight: 1.8, marginBottom: 16 }}>
-              横・後ろ・気になる箇所の写真は任意です。顔が写らない角度でお願いします。
+              ダメージ箇所、くせ毛箇所、頭皮の状態など、気になる箇所がありましたら、写真を添付してください（任意）
             </p>
 
             {[
-              { key: "side", label: "横（耳〜毛先）" },
-              { key: "back", label: "後ろ（うなじ〜背中）" },
+              { key: "side", label: "写真1" },
+              { key: "back", label: "写真2" },
             ].map(({ key, label: l }) => (
               <div key={key} style={{ marginBottom: 16 }}>
                 <label style={label}>{l}</label>
@@ -549,10 +549,10 @@ export default function CounselingPage() {
             ))}
 
             <div style={{ border: "1px solid #eee", borderRadius: 6, padding: 14, marginBottom: 16 }}>
-              <label style={label}>気になる箇所</label>
+              <label style={label}>写真3</label>
               {photos.concern ? (
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                  <img src={photos.concern} alt="気になる箇所" style={{ width: 70, height: 70, objectFit: "cover", borderRadius: 6 }} />
+                  <img src={photos.concern} alt="写真3" style={{ width: 70, height: 70, objectFit: "cover", borderRadius: 6 }} />
                   <button
                     type="button"
                     onClick={() => setPhotos((p) => ({ ...p, concern: null }))}
