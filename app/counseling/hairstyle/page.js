@@ -10,13 +10,6 @@ const STYLE_TAGS = [
   "甘めロング", "かっこいい系", "スタイリングが簡単", "バッサリイメージチェンジ",
   "前髪だけ変えたい", "ボリュームアップ", "くせを活かしたい",
 ];
-const BUDGET_RANGES = [
-  { v: "under_300k", l: "〜30万VND" },
-  { v: "300k_600k", l: "30〜60万VND" },
-  { v: "600k_1m", l: "60〜100万VND" },
-  { v: "over_1m", l: "100万VND〜" },
-  { v: "flexible", l: "こだわらない" },
-];
 const LENGTHS = [
   { v: "short", l: "ショート" },
   { v: "medium", l: "ミディアム" },
@@ -38,7 +31,6 @@ const VOLUME = [
   { v: "medium", l: "普通" },
   { v: "many", l: "多い" },
 ];
-const CURL_POSITIONS = ["前髪", "根元", "中間", "毛先", "全体"];
 const PERIODS = [
   { v: "within_3m", l: "3ヶ月以内" },
   { v: "3_6m", l: "半年以内" },
@@ -50,13 +42,11 @@ const EMPTY = {
   desired_style_tags: [],
   desired_result: "",
   interested_menu_categories: [],
-  budget_range: null,
   hair_length: "medium",
   hair_type: "wavy",
   hair_thickness: "medium",
   hair_volume: "medium",
   damage_level: 3,
-  curl_position: [],
   bleach_history: null,
   bleach_last_done: null,
   perm_history: null,
@@ -66,7 +56,7 @@ const EMPTY = {
   preferred_stylist_id: null,
 };
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 5;
 
 export default function HairstyleCounselingPage() {
   const [userId, setUserId] = useState(null);
@@ -210,13 +200,11 @@ export default function HairstyleCounselingPage() {
         desired_style_tags: a.desired_style_tags,
         desired_result: a.desired_result,
         interested_menu_categories: a.interested_menu_categories,
-        budget_range: a.budget_range,
         hair_length: a.hair_length,
         hair_type: a.hair_type,
         hair_thickness: a.hair_thickness,
         hair_volume: a.hair_volume,
         damage_level: a.damage_level,
-        curl_position: a.curl_position,
         bleach_history: a.bleach_history,
         bleach_last_done: a.bleach_history ? a.bleach_last_done : null,
         perm_history: a.perm_history,
@@ -451,35 +439,6 @@ export default function HairstyleCounselingPage() {
 
         {step === 3 && (
           <>
-            <h1 style={h1}>ご予算の目安</h1>
-            <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 16 }}>だいたいの目安で大丈夫です</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
-              {BUDGET_RANGES.map((b) => (
-                <div
-                  key={b.v}
-                  onClick={() => set("budget_range", b.v)}
-                  style={{
-                    padding: 14,
-                    border: `1.5px solid ${a.budget_range === b.v ? "var(--color-black)" : "var(--color-beige-border)"}`,
-                    borderRadius: 6,
-                    cursor: "pointer",
-                    fontSize: 13.5,
-                    fontWeight: a.budget_range === b.v ? 600 : 400,
-                  }}
-                >
-                  {b.l}
-                </div>
-              ))}
-            </div>
-            <div style={btnRow}>
-              <button style={ghostBtn} onClick={back}>戻る</button>
-              <button style={primaryBtn} onClick={next}>次へ</button>
-            </div>
-          </>
-        )}
-
-        {step === 4 && (
-          <>
             <h1 style={h1}>現在の髪質</h1>
             <label style={label}>髪の長さ</label>
             <div style={tagRow}>
@@ -505,14 +464,6 @@ export default function HairstyleCounselingPage() {
                 <Tag key={g.v} selected={a.hair_volume === g.v} onClick={() => set("hair_volume", g.v)}>{g.l}</Tag>
               ))}
             </div>
-            <label style={label}>くせの位置（複数選択可）</label>
-            <div style={tagRow}>
-              {CURL_POSITIONS.map((c) => (
-                <Tag key={c} selected={a.curl_position.includes(c)} onClick={() => set("curl_position", toggle(a.curl_position, c))}>
-                  {c}
-                </Tag>
-              ))}
-            </div>
             <label style={label}>ダメージレベル：{a.damage_level} / 5</label>
             <input
               type="range"
@@ -529,7 +480,7 @@ export default function HairstyleCounselingPage() {
           </>
         )}
 
-        {step === 5 && (
+        {step === 4 && (
           <>
             <h1 style={h1}>施術履歴</h1>
             <HistoryBlock label="ブリーチ" valueKey="bleach_history" whenKey="bleach_last_done" />
@@ -575,7 +526,7 @@ export default function HairstyleCounselingPage() {
           </>
         )}
 
-        {step === 6 && (
+        {step === 5 && (
           <>
             <h1 style={h1}>スタイリストを選ぶ</h1>
             <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 16 }}>
