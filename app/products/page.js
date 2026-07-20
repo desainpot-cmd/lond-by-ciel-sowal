@@ -15,6 +15,30 @@ const CATEGORIES = [
 
 const SWATCHES = ["#DCEFE3", "#F3E7DA", "#EAE3D5", "#F5EEE0", "#EFE0E0", "#E7ECEF"];
 
+const parseVolume = (v) => {
+  const m = String(v || "").match(/[\d.]+/);
+  return m ? parseFloat(m[0]) : 0;
+};
+
+// 同じブランド+商品名の容量違いを1枚のカードにまとめ、在庫がある中で一番小さい容量を代表にする
+const dedupeByVariantGroup = (products) => {
+  const groups = new Map();
+  for (const p of products) {
+    const name = p.product_translations?.[0]?.name || p.id;
+    const key = `${p.brand_id || "none"}::${name}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(p);
+  }
+
+  const representatives = [];
+  for (const variants of groups.values()) {
+    const sorted = [...variants].sort((a, b) => parseVolume(a.volume) - parseVolume(b.volume));
+    const inStock = sorted.find((v) => v.stock > 0);
+    representatives.push(inStock || sorted[0]);
+  }
+  return representatives;
+};
+
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -39,7 +63,7 @@ export default function ProductsPage() {
 
   const fmt = (n) => (n ? Number(n).toLocaleString("vi-VN") + " VND" : "");
 
-  const filtered = products.filter((p) => {
+  const filtered = dedupeByVariantGroup(products).filter((p) => {
     if (filterBrandId && p.brand_id !== filterBrandId) return false;
     if (filterCategory && p.category !== filterCategory) return false;
     return true;
