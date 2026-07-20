@@ -21,6 +21,11 @@ export default function CheckoutPage() {
   const [couponMsg, setCouponMsg] = useState("");
   const [applyingCoupon, setApplyingCoupon] = useState(false);
 
+  const [deliveryMethod, setDeliveryMethod] = useState("pickup");
+  const [shippingAddress, setShippingAddress] = useState("");
+  const [shippingName, setShippingName] = useState("");
+  const [shippingPhone, setShippingPhone] = useState("");
+
   useEffect(() => {
     const load = async () => {
       const { data, error } = await supabase
@@ -113,8 +118,16 @@ export default function CheckoutPage() {
   };
 
   const reportPaid = async (reportChannel = "app") => {
-    setSaving(true);
     setErrorMsg("");
+
+    if (deliveryMethod === "delivery") {
+      if (!shippingName.trim() || !shippingPhone.trim() || !shippingAddress.trim()) {
+        setErrorMsg("配送先のお名前・電話番号・住所をすべて入力してください");
+        return;
+      }
+    }
+
+    setSaving(true);
 
     const { data: userData } = await supabase.auth.getUser();
     if (!userData?.user) {
@@ -122,6 +135,16 @@ export default function CheckoutPage() {
       return;
     }
     const userId = userData.user.id;
+
+    const { data: existingAppUser } = await supabase
+      .from("app_users")
+      .select("id")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (!existingAppUser) {
+      await supabase.from("app_users").insert({ id: userId, role: "customer" });
+    }
 
     let { data: profile } = await supabase
       .from("customer_profiles")
@@ -150,6 +173,10 @@ export default function CheckoutPage() {
         total_amount: finalPrice,
         status: "payment_reported",
         coupon_id: appliedCoupon?.id || null,
+        delivery_method: deliveryMethod,
+        shipping_name: deliveryMethod === "delivery" ? shippingName.trim() : null,
+        shipping_phone: deliveryMethod === "delivery" ? shippingPhone.trim() : null,
+        shipping_address: deliveryMethod === "delivery" ? shippingAddress.trim() : null,
       })
       .select()
       .single();
@@ -234,6 +261,67 @@ export default function CheckoutPage() {
           <span>合計</span>
           <span>{fmt(finalPrice)}</span>
         </div>
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <p style={{ fontSize: 12.5, color: "var(--color-beige-gray)", marginBottom: 10 }}>受け取り方法</p>
+        <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
+          {[
+            ["pickup", "店頭受け取り"],
+            ["delivery", "配送"],
+          ].map(([value, label]) => (
+            <button
+              key={value}
+              onClick={() => setDeliveryMethod(value)}
+              style={{
+                flex: 1,
+                padding: 12,
+                borderRadius: 4,
+                border: `1.5px solid ${deliveryMethod === value ? "var(--color-black)" : "var(--color-beige-border)"}`,
+                background: deliveryMethod === value ? "var(--color-black)" : "transparent",
+                color: deliveryMethod === value ? "var(--color-bg)" : "var(--color-black)",
+                fontSize: 13,
+                cursor: "pointer",
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {deliveryMethod === "delivery" && (
+          <div style={{ marginBottom: 4 }}>
+            <p
+              style={{
+                fontSize: 11.5,
+                color: finalPrice >= 500000 ? "var(--color-text)" : "#b00",
+                marginBottom: 12,
+              }}
+            >
+              {finalPrice >= 500000 ? "送料無料" : "送料は着払いとなります"}
+            </p>
+
+            <input
+              value={shippingName}
+              onChange={(e) => setShippingName(e.target.value)}
+              placeholder="お名前"
+              style={{ width: "100%", padding: 11, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 13, boxSizing: "border-box", marginBottom: 10 }}
+            />
+            <input
+              value={shippingPhone}
+              onChange={(e) => setShippingPhone(e.target.value)}
+              placeholder="電話番号"
+              style={{ width: "100%", padding: 11, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 13, boxSizing: "border-box", marginBottom: 10 }}
+            />
+            <textarea
+              value={shippingAddress}
+              onChange={(e) => setShippingAddress(e.target.value)}
+              placeholder="配送先住所"
+              rows={3}
+              style={{ width: "100%", padding: 11, border: "1px solid var(--color-beige-border)", borderRadius: 4, fontSize: 13, boxSizing: "border-box", resize: "none" }}
+            />
+          </div>
+        )}
       </div>
 
       <div style={{ marginBottom: 20 }}>
