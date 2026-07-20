@@ -65,6 +65,7 @@ export default function ProductsPage() {
   const fmt = (n) => (n ? Number(n).toLocaleString("vi-VN") + " VND" : "");
 
   const filtered = dedupeByVariantGroup(products).filter((p) => {
+    if (p.stock <= 0) return false;
     if (filterBrandId && p.brand_id !== filterBrandId) return false;
     if (filterCategory && p.category !== filterCategory) return false;
     return true;
@@ -145,9 +146,6 @@ export default function ProductsPage() {
               {fmt(p.price)}
               {p.allVolumes.length > 1 && "〜"}
             </div>
-            {p.stock <= 0 && (
-              <div style={{ fontSize: 10.5, color: "#b00", marginTop: 2 }}>在庫なし</div>
-            )}
           </Link>
         ))}
       </div>
