@@ -34,7 +34,8 @@ const dedupeByVariantGroup = (products) => {
   for (const variants of groups.values()) {
     const sorted = [...variants].sort((a, b) => parseVolume(a.volume) - parseVolume(b.volume));
     const inStock = sorted.find((v) => v.stock > 0);
-    representatives.push(inStock || sorted[0]);
+    const rep = inStock || sorted[0];
+    representatives.push({ ...rep, allVolumes: sorted.map((v) => v.volume) });
   }
   return representatives;
 };
@@ -137,8 +138,13 @@ export default function ProductsPage() {
             <div style={{ fontSize: 12.5, fontWeight: 600, lineHeight: 1.4, marginBottom: 4 }}>
               {p.product_translations?.[0]?.name || "(名称未設定)"}
             </div>
-            <div style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 2 }}>{p.volume}</div>
-            <div style={{ fontSize: 13, fontWeight: 600 }}>{fmt(p.price)}</div>
+            <div style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 2 }}>
+              {p.allVolumes.join(" ")}
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 600 }}>
+              {fmt(p.price)}
+              {p.allVolumes.length > 1 && "〜"}
+            </div>
             {p.stock <= 0 && (
               <div style={{ fontSize: 10.5, color: "#b00", marginTop: 2 }}>在庫なし</div>
             )}
