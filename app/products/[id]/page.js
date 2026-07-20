@@ -5,10 +5,16 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "../../../lib/supabaseClient";
 
+const parseVolume = (v) => {
+  const m = String(v || "").match(/[\d.]+/);
+  return m ? parseFloat(m[0]) : 0;
+};
+
 export default function ProductDetailPage() {
   const { id } = useParams();
   const router = useRouter();
   const [product, setProduct] = useState(null);
+  const [variants, setVariants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const [tab, setTab] = useState("desc");
@@ -17,19 +23,48 @@ export default function ProductDetailPage() {
     const load = async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("id, volume, price, stock, category, image_url, product_translations(name, description, usage_text)")
+        .select("id, brand_id, volume, price, stock, category, image_url, product_translations(name, description, usage_text)")
         .eq("id", id)
         .single();
 
       if (error) {
         setErrorMsg(error.message);
-      } else {
-        setProduct(data);
+        setLoading(false);
+        return;
       }
+
+      setProduct(data);
+
+      const name = data.product_translations?.[0]?.name;
+      if (data.brand_id && name) {
+        const { data: group } = await supabase
+          .from("products")
+          .select("id, volume, price, stock, image_url, product_translations!inner(name, description, usage_text)")
+          .eq("brand_id", data.brand_id)
+          .eq("product_translations.name", name);
+
+        if (group && group.length > 0) {
+          const sorted = [...group].sort((a, b) => parseVolume(a.volume) - parseVolume(b.volume));
+          setVariants(sorted);
+          const current = sorted.find((v) => v.id === id);
+          if (current) setProduct((prev) => ({ ...prev, ...current }));
+        } else {
+          setVariants([data]);
+        }
+      } else {
+        setVariants([data]);
+      }
+
       setLoading(false);
     };
     if (id) load();
   }, [id]);
+
+  const selectVariant = (variant) => {
+    if (variant.stock <= 0 || variant.id === product.id) return;
+    setProduct((prev) => ({ ...prev, ...variant }));
+    router.replace(`/products/${variant.id}`, { scroll: false });
+  };
 
   const fmt = (n) => (n ? Number(n).toLocaleString("vi-VN") + " VND" : "");
 
@@ -56,6 +91,34 @@ export default function ProductDetailPage() {
       )}
 
       <h1 style={{ fontFamily: "serif", fontSize: 21, marginBottom: 8 }}>{t.name || "(商品名なし)"}</h1>
+
+      {variants.length > 1 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+          {variants.map((v) => {
+            const selected = v.id === product.id;
+            const oos = v.stock <= 0;
+            return (
+              <button
+                key={v.id}
+                onClick={() => selectVariant(v)}
+                disabled={oos}
+                style={{
+                  padding: "8px 14px",
+                  borderRadius: 999,
+                  border: `1px solid ${selected ? "#1b1b1b" : "#e6e1d6"}`,
+                  background: selected ? "#1b1b1b" : "transparent",
+                  color: oos ? "#c4bfb3" : selected ? "#ffffff" : "#1b1b1b",
+                  fontSize: 13,
+                  cursor: oos ? "not-allowed" : "pointer",
+                  textDecoration: oos ? "line-through" : "none",
+                }}
+              >
+                {v.volume}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
         <div style={{ fontSize: 16, fontWeight: 600 }}>{fmt(product.price)}</div>
