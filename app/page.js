@@ -106,6 +106,16 @@ export default function Home() {
             </h1>
             <p
               style={{
+                fontFamily: "serif",
+                color: "var(--color-black)",
+                fontSize: "clamp(12px, 2.2vw, 18px)",
+                marginTop: 8,
+              }}
+            >
+              あなたにもっと似合う
+            </p>
+            <p
+              style={{
                 color: "var(--color-beige-gray)",
                 fontSize: "clamp(9px, 1.6vw, 13px)",
                 marginTop: 10,
