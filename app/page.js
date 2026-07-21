@@ -112,7 +112,7 @@ export default function Home() {
                 marginTop: 8,
               }}
             >
-              あなたにもっと似合う
+              あなたにとってもっと似合う
             </p>
             <p
               style={{
