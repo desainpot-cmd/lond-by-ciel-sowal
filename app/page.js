@@ -154,6 +154,18 @@ export default function Home() {
           </Link>
 
           <Link
+            href="/styles"
+            style={{
+              color: "var(--color-text)",
+              fontSize: "clamp(10px, 1.6vw, 13px)",
+              textDecoration: "underline",
+              whiteSpace: "nowrap",
+            }}
+          >
+            スタイルを見る
+          </Link>
+
+          <Link
             href="/stylists"
             style={{
               color: "var(--color-text)",

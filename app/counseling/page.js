@@ -53,6 +53,9 @@ export default function CounselingChoicePage() {
         <Link href="/products" style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline" }}>
           商品一覧を見る
         </Link>
+        <Link href="/styles" style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline" }}>
+          スタイルを見る
+        </Link>
         <Link href="/stylists" style={{ color: "var(--color-text)", fontSize: 12, textDecoration: "underline" }}>
           スタイリスト紹介を見る
         </Link>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "../../../lib/supabaseClient";
 import { uploadCounselingPhoto } from "../../../lib/uploadPhoto";
 
@@ -357,9 +358,23 @@ export default function CounselingPage() {
       <main style={wrap}>
         <div style={{ ...box, textAlign: "center", marginTop: 80 }}>
           <h1 style={h1}>送信しました</h1>
-          <p style={{ fontSize: 13, color: "var(--color-beige-gray)", lineHeight: 1.8 }}>
+          <p style={{ fontSize: 13, color: "var(--color-beige-gray)", lineHeight: 1.8, marginBottom: 24 }}>
             スタイリストが内容を確認し、あなたに合う商品を提案します。
           </p>
+          <Link
+            href="/"
+            style={{
+              display: "inline-block",
+              padding: "12px 28px",
+              background: "var(--color-black)",
+              color: "var(--color-bg)",
+              borderRadius: 4,
+              textDecoration: "none",
+              fontSize: 13,
+            }}
+          >
+            トップに戻る
+          </Link>
         </div>
       </main>
     );
