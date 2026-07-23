@@ -39,6 +39,70 @@ const PERIODS = [
   { v: "over_1y", l: "1年以上前" },
 ];
 
+function LengthIcon({ kind, size = 20 }) {
+  const hairLen = { short: 10, medium: 15, long: 19, very_long: 23 }[kind] || 15;
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 28" fill="none">
+      <circle cx="12" cy="5" r="4" stroke="currentColor" strokeWidth="1.4" />
+      <path d={`M8,7 C6,10 6,${hairLen - 3} 8,${hairLen}`} stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+      <path d={`M16,7 C18,10 18,${hairLen - 3} 16,${hairLen}`} stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+    </svg>
+  );
+}
+
+function HairTypeIcon({ kind, size = 20 }) {
+  const xs = [5, 12, 19];
+  let paths;
+  if (kind === "straight") {
+    paths = xs.map((cx) => `M${cx},2 L${cx},22`);
+  } else if (kind === "wavy") {
+    paths = xs.map((cx) => `M${cx},2 C${cx - 3},7 ${cx + 3},11 ${cx},16 C${cx - 3},19 ${cx + 3},21 ${cx},22`);
+  } else {
+    paths = xs.map((cx) => `M${cx},2 C${cx - 4},5 ${cx + 4},7 ${cx},10 C${cx - 4},13 ${cx + 4},15 ${cx},18 C${cx - 4},20 ${cx + 4},21 ${cx},22`);
+  }
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {paths.map((d, i) => (
+        <path key={i} d={d} stroke="currentColor" strokeWidth={1.4} strokeLinecap="round" fill="none" />
+      ))}
+    </svg>
+  );
+}
+
+function ThicknessIcon({ kind, size = 20 }) {
+  const width = { fine: 1.2, medium: 2.6, thick: 4.2 }[kind] || 2;
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <line x1="9" y1="3" x2="15" y2="21" stroke="currentColor" strokeWidth={width} strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ThicknessSectionIcon({ size = 48 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <line x1="8" y1="3" x2="10" y2="21" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <line x1="15" y1="3" x2="17" y2="21" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function VolumeIcon({ kind, size = 20 }) {
+  const dots = {
+    few: [[6, 6], [16, 9], [10, 16], [18, 18]],
+    medium: [[5, 5], [13, 4], [19, 8], [7, 11], [15, 13], [4, 17], [11, 19], [18, 20]],
+    many: [[4, 4], [10, 3], [16, 5], [21, 8], [6, 9], [13, 9], [19, 12], [3, 13], [9, 15], [15, 16], [20, 18], [5, 20], [12, 21], [18, 22]],
+  }[kind] || [];
+  const r = { few: 1.6, medium: 1.4, many: 1.2 }[kind] || 1.4;
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      {dots.map(([cx, cy], i) => (
+        <circle key={i} cx={cx} cy={cy} r={r} fill="currentColor" />
+      ))}
+    </svg>
+  );
+}
+
 const EMPTY = {
   desired_style_tags: [],
   desired_result: "",
@@ -249,11 +313,14 @@ export default function HairstyleCounselingPage() {
   const progress = { height: 4, background: "#eee", borderRadius: 2, marginBottom: 24, overflow: "hidden" };
   const progressFill = { height: "100%", background: "var(--color-black)", width: `${(step / TOTAL_STEPS) * 100}%` };
 
-  const Tag = ({ selected, onClick, children, style }) => (
+  const Tag = ({ selected, onClick, children, icon, style }) => (
     <button
       type="button"
       onClick={onClick}
       style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
         padding: "9px 14px",
         borderRadius: 999,
         border: `1px solid ${selected ? "var(--color-black)" : "var(--color-beige-border)"}`,
@@ -265,8 +332,12 @@ export default function HairstyleCounselingPage() {
       }}
     >
       {children}
+      {icon}
     </button>
   );
+
+  const sectionRow = { display: "flex", gap: 14, alignItems: "center", marginBottom: 20 };
+  const sectionIconWrap = { color: "var(--color-black)", flexShrink: 0 };
 
   // 認証チェック中
   if (!authChecked) {
@@ -455,39 +526,93 @@ export default function HairstyleCounselingPage() {
         {step === 3 && (
           <>
             <h1 style={h1}>現在の髪質</h1>
+
             <label style={label}>髪の長さ</label>
-            <div style={tagRow}>
-              {LENGTHS.map((g) => (
-                <Tag key={g.v} selected={a.hair_length === g.v} onClick={() => set("hair_length", g.v)}>{g.l}</Tag>
-              ))}
+            <div style={sectionRow}>
+              <div style={sectionIconWrap}>
+                <LengthIcon kind="long" size={48} />
+              </div>
+              <div style={{ ...tagRow, marginBottom: 0, flex: 1 }}>
+                {LENGTHS.map((g) => (
+                  <Tag key={g.v} selected={a.hair_length === g.v} onClick={() => set("hair_length", g.v)} icon={<LengthIcon kind={g.v} size={16} />}>
+                    {g.l}
+                  </Tag>
+                ))}
+              </div>
             </div>
+
             <label style={label}>髪質</label>
-            <div style={tagRow}>
-              {HAIR_TYPES.map((g) => (
-                <Tag key={g.v} selected={a.hair_type === g.v} onClick={() => set("hair_type", g.v)}>{g.l}</Tag>
-              ))}
+            <div style={sectionRow}>
+              <div style={sectionIconWrap}>
+                <HairTypeIcon kind="wavy" size={48} />
+              </div>
+              <div style={{ ...tagRow, marginBottom: 0, flex: 1 }}>
+                {HAIR_TYPES.map((g) => (
+                  <Tag key={g.v} selected={a.hair_type === g.v} onClick={() => set("hair_type", g.v)} icon={<HairTypeIcon kind={g.v} size={16} />}>
+                    {g.l}
+                  </Tag>
+                ))}
+              </div>
             </div>
+
             <label style={label}>髪の太さ</label>
-            <div style={tagRow}>
-              {THICKNESS.map((g) => (
-                <Tag key={g.v} selected={a.hair_thickness === g.v} onClick={() => set("hair_thickness", g.v)}>{g.l}</Tag>
-              ))}
+            <div style={sectionRow}>
+              <div style={sectionIconWrap}>
+                <ThicknessSectionIcon size={48} />
+              </div>
+              <div style={{ ...tagRow, marginBottom: 0, flex: 1 }}>
+                {THICKNESS.map((g) => (
+                  <Tag key={g.v} selected={a.hair_thickness === g.v} onClick={() => set("hair_thickness", g.v)} icon={<ThicknessIcon kind={g.v} size={16} />}>
+                    {g.l}
+                  </Tag>
+                ))}
+              </div>
             </div>
+
             <label style={label}>毛量</label>
-            <div style={tagRow}>
-              {VOLUME.map((g) => (
-                <Tag key={g.v} selected={a.hair_volume === g.v} onClick={() => set("hair_volume", g.v)}>{g.l}</Tag>
+            <div style={sectionRow}>
+              <div style={sectionIconWrap}>
+                <VolumeIcon kind="many" size={48} />
+              </div>
+              <div style={{ ...tagRow, marginBottom: 0, flex: 1 }}>
+                {VOLUME.map((g) => (
+                  <Tag key={g.v} selected={a.hair_volume === g.v} onClick={() => set("hair_volume", g.v)} icon={<VolumeIcon kind={g.v} size={16} />}>
+                    {g.l}
+                  </Tag>
+                ))}
+              </div>
+            </div>
+
+            <label style={label}>ダメージレベル：{a.damage_level} / 5</label>
+            <div style={{ position: "relative", height: 32 }}>
+              <input
+                type="range"
+                min={1}
+                max={5}
+                value={a.damage_level}
+                onChange={(e) => set("damage_level", Number(e.target.value))}
+                style={{ position: "absolute", inset: 0, width: "100%", height: 32, opacity: 0, cursor: "pointer", margin: 0 }}
+              />
+              <div style={{ position: "absolute", top: 15, left: 0, right: 0, height: 1, background: "var(--color-beige-border)", pointerEvents: "none" }} />
+              <div
+                style={{
+                  position: "absolute",
+                  top: 8,
+                  left: `calc(${((a.damage_level - 1) / 4) * 100}% - 8px)`,
+                  width: 16,
+                  height: 16,
+                  borderRadius: "50%",
+                  background: "var(--color-black)",
+                  pointerEvents: "none",
+                }}
+              />
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 20 }}>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <span key={n}>{n}</span>
               ))}
             </div>
-            <label style={label}>ダメージレベル：{a.damage_level} / 5</label>
-            <input
-              type="range"
-              min={1}
-              max={5}
-              value={a.damage_level}
-              onChange={(e) => set("damage_level", Number(e.target.value))}
-              style={{ width: "100%", marginBottom: 20 }}
-            />
+
             <div style={btnRow}>
               <button style={ghostBtn} onClick={back}>戻る</button>
               <button style={primaryBtn} onClick={next}>次へ</button>
