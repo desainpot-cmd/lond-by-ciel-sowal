@@ -71,14 +71,15 @@ export default function ProductsPage() {
     return true;
   });
 
-  const selectStyle = {
-    flex: 1,
-    padding: 11,
-    border: "1px solid var(--color-beige-border)",
-    borderRadius: 4,
+  const pillStyle = (selected) => ({
+    padding: "9px 16px",
+    borderRadius: 999,
+    border: `1px solid ${selected ? "var(--color-black)" : "var(--color-beige-border)"}`,
+    background: selected ? "var(--color-black)" : "transparent",
+    color: selected ? "var(--color-bg)" : "var(--color-black)",
     fontSize: 13,
-    background: "var(--color-bg)",
-  };
+    cursor: "pointer",
+  });
 
   return (
     <main style={{ minHeight: "100vh", padding: "32px 20px", maxWidth: 640, margin: "0 auto" }}>
@@ -88,23 +89,26 @@ export default function ProductsPage() {
 
       <h1 style={{ fontFamily: "serif", fontSize: 22, margin: "16px 0 20px" }}>商品一覧</h1>
 
-      <div style={{ display: "flex", gap: 10, marginBottom: 24 }}>
-        <select value={filterBrandId} onChange={(e) => setFilterBrandId(e.target.value)} style={selectStyle}>
-          <option value="">すべてのブランド</option>
-          {brands.map((b) => (
-            <option key={b.id} value={b.id}>
-              {b.name}
-            </option>
-          ))}
-        </select>
-        <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} style={selectStyle}>
-          <option value="">すべてのカテゴリ</option>
-          {CATEGORIES.map((c) => (
-            <option key={c.v} value={c.v}>
-              {c.l}
-            </option>
-          ))}
-        </select>
+      <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+        <button onClick={() => setFilterBrandId("")} style={pillStyle(filterBrandId === "")}>
+          すべてのブランド
+        </button>
+        {brands.map((b) => (
+          <button key={b.id} onClick={() => setFilterBrandId(b.id)} style={pillStyle(filterBrandId === b.id)}>
+            {b.name}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+        <button onClick={() => setFilterCategory("")} style={pillStyle(filterCategory === "")}>
+          すべてのカテゴリ
+        </button>
+        {CATEGORIES.map((c) => (
+          <button key={c.v} onClick={() => setFilterCategory(c.v)} style={pillStyle(filterCategory === c.v)}>
+            {c.l}
+          </button>
+        ))}
       </div>
 
       {loading && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>}

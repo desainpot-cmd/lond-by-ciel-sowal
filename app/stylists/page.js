@@ -35,7 +35,7 @@ export default function StylistsPage() {
         ← ホームに戻る
       </Link>
 
-      <h1 style={{ fontFamily: "serif", fontSize: 22, margin: "16px 0 20px" }}>スタイリスト紹介</h1>
+      <h1 style={{ fontFamily: "serif", fontSize: 22, margin: "16px 0 32px", textAlign: "center" }}>スタイリスト紹介</h1>
 
       {loading && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>}
 
@@ -43,47 +43,62 @@ export default function StylistsPage() {
         <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>現在、紹介できるスタイリスト情報がありません。</p>
       )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 30 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 56, marginBottom: 40 }}>
         {stylists.map((s) => (
-          <div key={s.id} style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16 }}>
-            <div style={{ display: "flex", gap: 12, marginBottom: 10 }}>
-              {s.photo_url ? (
-                <img
-                  src={s.photo_url}
-                  alt={s.display_name}
-                  style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
-                />
-              ) : (
-                <div style={{ width: 56, height: 56, borderRadius: "50%", background: "#f0ede5", flexShrink: 0 }} />
+          <div key={s.id}>
+            {s.photo_url ? (
+              <img
+                src={s.photo_url}
+                alt={s.display_name}
+                style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", objectPosition: "top", borderRadius: 4, display: "block" }}
+              />
+            ) : (
+              <div style={{ width: "100%", aspectRatio: "3 / 4", background: "var(--color-beige-light)", borderRadius: 4 }} />
+            )}
+
+            <div style={{ textAlign: "center", marginTop: 20 }}>
+              <div style={{ fontFamily: "serif", fontSize: 9, letterSpacing: 1.5, color: "var(--color-black)" }}>
+                LOND BY CIEL SOWAL
+              </div>
+              <div style={{ fontFamily: "serif", fontSize: 22, marginTop: 8 }}>{s.display_name}</div>
+              {s.years_experience && (
+                <div style={{ fontSize: 11.5, color: "var(--color-beige-gray)", marginTop: 4 }}>経験{s.years_experience}年</div>
               )}
-              <div>
-                <div style={{ fontSize: 14.5, fontWeight: 600 }}>{s.display_name}</div>
-                {s.years_experience && (
-                  <div style={{ fontSize: 11.5, color: "var(--color-beige-gray)", marginTop: 3 }}>経験{s.years_experience}年</div>
-                )}
-              </div>
+
+              {s.specialties?.length > 0 && (
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", marginTop: 14 }}>
+                  {s.specialties.map((sp) => (
+                    <span
+                      key={sp}
+                      style={{
+                        fontSize: 10.5,
+                        border: "1px solid var(--color-beige-border)",
+                        borderRadius: 999,
+                        padding: "4px 12px",
+                        color: "var(--color-beige-gray)",
+                      }}
+                    >
+                      {sp}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {s.bio && (
+                <p style={{ fontSize: 12.5, color: "var(--color-beige-gray)", lineHeight: 1.8, marginTop: 16 }}>{s.bio}</p>
+              )}
+
+              {s.instagram_url && (
+                <a
+                  href={s.instagram_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "inline-block", fontSize: 11.5, color: "var(--color-accent)", marginTop: 12 }}
+                >
+                  Instagramを見る →
+                </a>
+              )}
             </div>
-
-            {s.specialties?.length > 0 && (
-              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}>
-                {s.specialties.map((sp) => (
-                  <span
-                    key={sp}
-                    style={{ fontSize: 10.5, border: "1px solid var(--color-beige-border)", borderRadius: 999, padding: "4px 10px", color: "var(--color-beige-gray)" }}
-                  >
-                    {sp}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {s.bio && <p style={{ fontSize: 12, color: "var(--color-beige-gray)", lineHeight: 1.7, marginBottom: s.instagram_url ? 10 : 0 }}>{s.bio}</p>}
-
-            {s.instagram_url && (
-              <a href={s.instagram_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 11.5, color: "var(--color-accent)" }}>
-                Instagramを見る →
-              </a>
-            )}
           </div>
         ))}
       </div>

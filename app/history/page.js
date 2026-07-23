@@ -41,7 +41,7 @@ export default function HistoryPage() {
       const { data } = await supabase
         .from("orders")
         .select(
-          "id, total_amount, status, created_at, order_items(quantity, unit_price, products(product_translations(name)))"
+          "id, total_amount, status, created_at, order_items(quantity, unit_price, products(image_url, product_translations(name)))"
         )
         .eq("customer_id", profile.id)
         .order("created_at", { ascending: false });
@@ -96,10 +96,21 @@ export default function HistoryPage() {
               </span>
             </div>
 
-            <div style={{ fontSize: 13, marginBottom: 8 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 8 }}>
               {o.order_items?.map((item, i) => (
-                <div key={i}>
-                  {item.products?.product_translations?.[0]?.name || "(商品名なし)"} × {item.quantity}
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  {item.products?.image_url ? (
+                    <img
+                      src={item.products.image_url}
+                      alt=""
+                      style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 4, flexShrink: 0 }}
+                    />
+                  ) : (
+                    <div style={{ width: 40, height: 40, background: "#f0ede5", borderRadius: 4, flexShrink: 0 }} />
+                  )}
+                  <span style={{ fontSize: 13 }}>
+                    {item.products?.product_translations?.[0]?.name || "(商品名なし)"} × {item.quantity}
+                  </span>
                 </div>
               ))}
             </div>

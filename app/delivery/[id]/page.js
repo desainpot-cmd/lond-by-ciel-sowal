@@ -29,7 +29,7 @@ export default function DeliveryStatusPage() {
       const { data, error } = await supabase
         .from("orders")
         .select(
-          "id, total_amount, status, created_at, order_items(quantity, unit_price, products(volume, product_translations(name)))"
+          "id, total_amount, status, created_at, order_items(quantity, unit_price, products(volume, image_url, product_translations(name)))"
         )
         .eq("id", id)
         .single();
@@ -103,12 +103,23 @@ export default function DeliveryStatusPage() {
       <div style={{ border: "1px solid var(--color-beige-border)", borderRadius: 6, padding: 16, marginBottom: 16 }}>
         <p style={{ fontSize: 12, color: "var(--color-beige-gray)", marginBottom: 10 }}>ご注文内容</p>
         {order.order_items?.map((item, i) => (
-          <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, padding: "6px 0", borderBottom: "1px solid #f0ede5" }}>
-            <span>
-              {item.products?.product_translations?.[0]?.name || "(商品名なし)"}
-              {item.products?.volume ? `（${item.products.volume}）` : ""} × {item.quantity}
-            </span>
-            <span>{fmt(item.unit_price * item.quantity)}</span>
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, fontSize: 13, padding: "6px 0", borderBottom: "1px solid #f0ede5" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+              {item.products?.image_url ? (
+                <img
+                  src={item.products.image_url}
+                  alt=""
+                  style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 4, flexShrink: 0 }}
+                />
+              ) : (
+                <div style={{ width: 40, height: 40, background: "#f0ede5", borderRadius: 4, flexShrink: 0 }} />
+              )}
+              <span>
+                {item.products?.product_translations?.[0]?.name || "(商品名なし)"}
+                {item.products?.volume ? `（${item.products.volume}）` : ""} × {item.quantity}
+              </span>
+            </div>
+            <span style={{ flexShrink: 0 }}>{fmt(item.unit_price * item.quantity)}</span>
           </div>
         ))}
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, fontWeight: 600, marginTop: 10 }}>

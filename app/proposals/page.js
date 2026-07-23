@@ -56,7 +56,7 @@ export default function ProposalsPage() {
       const { data: recs, error } = await supabase
         .from("stylist_recommendations")
         .select(
-          "id, usage_instruction, comment, created_at, products(id, volume, price, product_translations(name, description)), stylist_profiles(display_name)"
+          "id, usage_instruction, comment, created_at, products(id, volume, price, image_url, product_translations(name, description)), stylist_profiles(display_name)"
         )
         .in("counseling_id", counselingIds)
         .order("created_at", { ascending: false });
@@ -201,7 +201,15 @@ export default function ProposalsPage() {
                   )}
 
                   <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
-                    <div style={{ width: 56, height: 56, background: "#f0ede5", borderRadius: 6, flexShrink: 0 }} />
+                    {r.products?.image_url ? (
+                      <img
+                        src={r.products.image_url}
+                        alt=""
+                        style={{ width: 56, height: 56, objectFit: "cover", borderRadius: 6, flexShrink: 0 }}
+                      />
+                    ) : (
+                      <div style={{ width: 56, height: 56, background: "#f0ede5", borderRadius: 6, flexShrink: 0 }} />
+                    )}
                     <div>
                       <div style={{ fontSize: 13.5, fontWeight: 600, marginBottom: 3 }}>{t?.name || "(商品名なし)"}</div>
                       <div style={{ fontSize: 11, color: "var(--color-beige-gray)", marginBottom: 3 }}>{r.products?.volume}</div>
