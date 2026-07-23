@@ -49,7 +49,7 @@ export default function StyleDetailPage() {
         <img
           src={style.image_url}
           alt=""
-          style={{ width: "100%", aspectRatio: "1.2", objectFit: "cover", borderRadius: 6, margin: "16px 0", display: "block" }}
+          style={{ width: "100%", aspectRatio: "1.2", objectFit: "cover", objectPosition: "top", borderRadius: 6, margin: "16px 0", display: "block" }}
         />
       ) : (
         <div style={{ background: "#f0ede5", borderRadius: 6, aspectRatio: "1.2", margin: "16px 0" }} />

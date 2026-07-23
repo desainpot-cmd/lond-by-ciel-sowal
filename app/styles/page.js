@@ -90,7 +90,7 @@ export default function StylesPage() {
               <img
                 src={s.image_url}
                 alt=""
-                style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", borderRadius: 4, display: "block" }}
+                style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", objectPosition: "top", borderRadius: 4, display: "block" }}
               />
             ) : (
               <div
