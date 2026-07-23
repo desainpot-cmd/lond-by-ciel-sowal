@@ -5,7 +5,7 @@ import Link from "next/link";
 import { supabase } from "../../../lib/supabaseClient";
 import { uploadCounselingPhoto } from "../../../lib/uploadPhoto";
 
-const MENU_CATEGORIES = ["カット", "カラー", "カット＆カラー", "パーマ", "縮毛矯正", "ケア", "その他"];
+const MENU_CATEGORIES = ["カット", "カラー", "ブリーチハイライト", "ポイントブリーチ", "フルブリーチ", "バレヤージュ", "パーマ", "縮毛矯正", "トリートメント"];
 const STYLE_TAGS = [
   "フェミニン", "クール", "ナチュラル", "モード系", "韓国風", "エレガント",
   "甘めロング", "かっこいい系", "スタイリングが簡単", "バッサリイメージチェンジ",

@@ -72,11 +72,18 @@ export default function CounselingChoicePage() {
         </Link>
       </div>
 
-      <div style={{ textAlign: "center" }}>
-        <h1 style={{ fontFamily: "serif", fontSize: 22, marginBottom: 8 }}>
-          今日は何をしたいですか？
+      <div style={{ textAlign: "center", maxWidth: 360 }}>
+        <h1 style={{ fontFamily: "serif", fontSize: 22, marginBottom: 10 }}>
+          今日は何を相談しますか？
         </h1>
-        <p style={{ fontSize: 12.5, color: "var(--color-beige-gray)" }}>あなたに合った内容をご案内します</p>
+        <p style={{ fontSize: 12.5, color: "var(--color-beige-gray)", lineHeight: 1.8, marginBottom: 12 }}>
+          ヘアスタイル・ヘアケア商品を、美容師に無料で相談できます。
+        </p>
+        <div style={{ fontSize: 12, color: "var(--color-beige-gray)", lineHeight: 2 }}>
+          <div>✓ 登録不要</div>
+          <div>✓ 無料カウンセリング</div>
+          <div>✓ いつでも気軽に利用可能</div>
+        </div>
       </div>
 
       <div style={{ width: "100%", maxWidth: 720, display: "flex", flexDirection: "column", gap: 20 }}>
