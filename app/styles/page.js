@@ -79,7 +79,7 @@ export default function StylesPage() {
       {loading && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>読み込み中...</p>}
       {!loading && filtered.length === 0 && <p style={{ fontSize: 13, color: "var(--color-beige-gray)" }}>該当するスタイルがありません</p>}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 48 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 14 }}>
         {filtered.map((s, i) => (
           <Link
             key={s.id}
@@ -90,37 +90,27 @@ export default function StylesPage() {
               <img
                 src={s.image_url}
                 alt=""
-                style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", objectPosition: "top", borderRadius: 4, display: "block" }}
+                style={{ width: "100%", aspectRatio: "1", objectFit: "cover", objectPosition: "top", borderRadius: 6, marginBottom: 8, display: "block" }}
               />
             ) : (
               <div
                 style={{
                   background: SWATCHES[i % SWATCHES.length],
-                  borderRadius: 4,
-                  aspectRatio: "3 / 4",
+                  borderRadius: 6,
+                  aspectRatio: "1",
+                  marginBottom: 8,
                 }}
               />
             )}
-
-            <div style={{ textAlign: "center", marginTop: 24 }}>
-              <div
-                style={{
-                  fontFamily: "serif",
-                  fontSize: 13,
-                  letterSpacing: 3,
-                  color: "var(--color-black)",
-                }}
-              >
-                LOND BY CIEL SOWAL
-              </div>
-              <div style={{ fontFamily: "serif", fontSize: 19, marginTop: 10 }}>
-                {s.name || "(名称未設定)"}
-              </div>
-              <div style={{ fontSize: 11, color: "var(--color-beige-gray)", marginTop: 6 }}>
-                {LENGTHS.find((l) => l.v === s.length_category)?.l || s.length_category}
-                {s.price_note ? ` ・ ${s.price_note}` : ""}
-              </div>
+            <div style={{ fontSize: 10.5, color: "var(--color-beige-gray)", marginBottom: 2 }}>
+              {LENGTHS.find((l) => l.v === s.length_category)?.l || s.length_category}
             </div>
+            <div style={{ fontSize: 12.5, fontWeight: 600, lineHeight: 1.4, marginBottom: 4 }}>
+              {s.name || "(名称未設定)"}
+            </div>
+            {s.price_note && (
+              <div style={{ fontSize: 13, fontWeight: 600 }}>{s.price_note}</div>
+            )}
           </Link>
         ))}
       </div>
