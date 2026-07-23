@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function LoginPage() {
@@ -130,6 +131,40 @@ export default function LoginPage() {
             </>
           )}
         </p>
+
+        <div style={{ marginTop: 36, paddingTop: 28, borderTop: "1px solid var(--color-beige-border)" }}>
+          <p style={{ fontSize: 11.5, color: "var(--color-beige-gray)", textAlign: "center", marginBottom: 14 }}>
+            会員登録前でもご覧いただけます
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
+            {[
+              { href: "/products", label: "商品一覧を見る" },
+              { href: "/styles", label: "スタイルを見る" },
+              { href: "/stylists", label: "スタイリスト紹介を見る" },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  border: "1px solid var(--color-black)",
+                  borderRadius: 999,
+                  padding: "8px 16px",
+                  color: "var(--color-black)",
+                  fontSize: 12,
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                  letterSpacing: 0.3,
+                }}
+              >
+                {item.label}
+                <span style={{ fontSize: "1.1em" }}>›</span>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </main>
   );
