@@ -13,6 +13,7 @@ const HAIRSTYLE_ILLUSTRATION_URL =
 export default function CounselingChoicePage() {
   const router = useRouter();
   const [userId, setUserId] = useState(null);
+  const [settings, setSettings] = useState(null);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -20,6 +21,16 @@ export default function CounselingChoicePage() {
       setUserId(data?.user?.id || null);
     };
     checkUser();
+
+    const loadSettings = async () => {
+      const { data } = await supabase
+        .from("salon_settings")
+        .select("booking_link_url, booking_link_label, payment_confirmation_zalo_url, google_maps_url")
+        .limit(1)
+        .maybeSingle();
+      setSettings(data || null);
+    };
+    loadSettings();
   }, []);
 
   const handleLogout = async () => {
@@ -146,24 +157,90 @@ export default function CounselingChoicePage() {
       </div>
 
       {userId && (
-        <button
-          onClick={handleLogout}
+        <div
           style={{
             position: "fixed",
             right: 20,
             bottom: 20,
-            background: "var(--color-black)",
-            color: "var(--color-bg)",
-            padding: "10px 18px",
-            borderRadius: 999,
-            border: "none",
-            fontSize: 12,
-            cursor: "pointer",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-end",
+            gap: 8,
           }}
         >
-          ログアウト
-        </button>
+          {settings?.payment_confirmation_zalo_url && (
+            <a
+              href={settings.payment_confirmation_zalo_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "var(--color-black)",
+                color: "var(--color-bg)",
+                padding: "10px 18px",
+                borderRadius: 999,
+                fontSize: 12,
+                textDecoration: "none",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Zaloで問い合わせ
+            </a>
+          )}
+          {settings?.booking_link_url && (
+            <a
+              href={settings.booking_link_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "var(--color-black)",
+                color: "var(--color-bg)",
+                padding: "10px 18px",
+                borderRadius: 999,
+                fontSize: 12,
+                textDecoration: "none",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {settings.booking_link_label || "オンライン予約"}
+            </a>
+          )}
+          {settings?.google_maps_url && (
+            <a
+              href={settings.google_maps_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "var(--color-black)",
+                color: "var(--color-bg)",
+                padding: "10px 18px",
+                borderRadius: 999,
+                fontSize: 12,
+                textDecoration: "none",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              地図で見る
+            </a>
+          )}
+          <button
+            onClick={handleLogout}
+            style={{
+              background: "var(--color-black)",
+              color: "var(--color-bg)",
+              padding: "10px 18px",
+              borderRadius: 999,
+              border: "none",
+              fontSize: 12,
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            }}
+          >
+            ログアウト
+          </button>
+        </div>
       )}
     </main>
   );

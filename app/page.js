@@ -11,6 +11,7 @@ const HERO_IMAGE_URL =
 export default function Home() {
   const router = useRouter();
   const [banners, setBanners] = useState([]);
+  const [settings, setSettings] = useState(null);
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
@@ -30,6 +31,15 @@ export default function Home() {
       setBanners(visible);
     };
 
+    const loadSettings = async () => {
+      const { data } = await supabase
+        .from("salon_settings")
+        .select("booking_link_url, booking_link_label, payment_confirmation_zalo_url, google_maps_url")
+        .limit(1)
+        .maybeSingle();
+      setSettings(data || null);
+    };
+
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data?.user) {
@@ -38,6 +48,7 @@ export default function Home() {
       }
       setChecking(false);
       loadBanners();
+      loadSettings();
     };
     checkUser();
   }, [router]);
@@ -112,7 +123,7 @@ export default function Home() {
                 marginTop: 8,
               }}
             >
-              あなたにとってもっと似合う
+              あなたにもっと似合う
             </p>
             <p
               style={{
@@ -169,6 +180,73 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      {(settings?.payment_confirmation_zalo_url || settings?.booking_link_url || settings?.google_maps_url) && (
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: 10,
+            padding: "24px 24px 0",
+          }}
+        >
+          {settings?.payment_confirmation_zalo_url && (
+            <a
+              href={settings.payment_confirmation_zalo_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "var(--color-black)",
+                color: "var(--color-bg)",
+                borderRadius: 999,
+                padding: "10px 18px",
+                fontSize: 13,
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Zaloで問い合わせ
+            </a>
+          )}
+          {settings?.booking_link_url && (
+            <a
+              href={settings.booking_link_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "var(--color-black)",
+                color: "var(--color-bg)",
+                borderRadius: 999,
+                padding: "10px 18px",
+                fontSize: 13,
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {settings.booking_link_label || "オンライン予約"}
+            </a>
+          )}
+          {settings?.google_maps_url && (
+            <a
+              href={settings.google_maps_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                background: "var(--color-black)",
+                color: "var(--color-bg)",
+                borderRadius: 999,
+                padding: "10px 18px",
+                fontSize: 13,
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              地図で見る
+            </a>
+          )}
+        </div>
+      )}
 
       {banners.length > 0 && (
         <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", gap: 10, padding: 24 }}>
